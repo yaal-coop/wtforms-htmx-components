@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+
+{% block title %}Combobox — wtforms-htmx{% endblock %}
+
+{% block extra_head %}
+  <link rel="stylesheet" href="{{ url_for('static', filename='combobox.css') }}">
+  {# Optional keyboard navigation. The library does not ship it. #}
+  <script src="{{ url_for('static', filename='combobox-enhance.js') }}" defer></script>
+{% endblock %}
+
+{% block content %}
+  <hgroup>
+    <h1>Combobox</h1>
+    <p>Four declarations in one form: <code>ComboboxSingleField</code>
+      and <code>ComboboxMultiField</code>, each in strict mode (catalog
+      values only) and in <code>allow_custom_value=True</code> mode
+      (the listbox surfaces an <em>Add ‹query›</em> option for
+      off-catalog input).</p>
+  </hgroup>
+
+  <form method="post">
+    <div class="combobox-grid">
+      <section class="combobox-cell">
+        <h2>Single, strict</h2>
+        <div class="combobox-wrap">
+          {{ form.country.label }}
+          <div class="combobox">
+            <div role="group" class="combobox-search">
+              {{ form.country.query() }}
+              {{ form.country.search() }}
+            </div>
+            {{ form.country.value() }}
+            {{ form.country.suggestions() }}
+          </div>
+        </div>
+      </section>
+
+      <section class="combobox-cell">
+        <h2>Single, allow custom</h2>
+        <div class="combobox-wrap">
+          {{ form.country_free.label }}
+          <div class="combobox">
+            <div role="group" class="combobox-search">
+              {{ form.country_free.query() }}
+              {{ form.country_free.search() }}
+            </div>
+            {{ form.country_free.value() }}
+            {{ form.country_free.suggestions() }}
+          </div>
+        </div>
+      </section>
+
+      <section class="demo-area combobox-cell">
+        <h2>Multi, strict</h2>
+        <div class="combobox-wrap">
+          {{ form.countries.label }}
+          <div role="group" class="combobox-search">
+            <div class="combobox multi-combobox multi-combobox-inline">
+              {{ form.countries.value() }}
+              {{ form.countries.query() }}
+              {{ form.countries.suggestions() }}
+            </div>
+            {{ form.countries.search() }}
+          </div>
+        </div>
+      </section>
+
+      <section class="combobox-cell">
+        <h2>Multi, allow custom</h2>
+        <div class="combobox-wrap">
+          {{ form.countries_free.label }}
+          <div role="group" class="combobox-search">
+            <div class="combobox multi-combobox multi-combobox-inline">
+              {{ form.countries_free.value() }}
+              {{ form.countries_free.query() }}
+              {{ form.countries_free.suggestions() }}
+            </div>
+            {{ form.countries_free.search() }}
+          </div>
+        </div>
+      </section>
+    </div>
+    {{ form.save(class_="save") }}
+  </form>
+{% endblock %}

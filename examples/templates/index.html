@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block title %}wtforms-htmx-components examples{% endblock %}
+
+{% block content %}
+  <hgroup>
+    <h1>wtforms-htmx-components</h1>
+    <p>Composite WTForms fields built on the wtforms-htmx primitives.</p>
+  </hgroup>
+
+  <section>
+    <h2>Composites</h2>
+    <p>Each page wraps a multi-trigger recipe behind a single
+      <code>FormField</code> declaration.</p>
+
+    <article class="example-card">
+      <header>
+        <h3><a href="{{ url_for('main.combobox') }}">Combobox</a></h3>
+      </header>
+      <p>
+        Single-value and multi-select combobox variants, plus the
+        <code>allow_custom_value</code> mode that surfaces a create
+        option in the listbox for off-catalog input.
+        Suggestions are plain <code>&lt;button&gt;</code> elements;
+        multi chips remove via <code>formnovalidate</code> submits.
+        Works without JavaScript; htmx adds live search and partial
+        wrapper swaps without changing the underlying wire format.
+      </p>
+    </article>
+  </section>
+{% endblock %}
