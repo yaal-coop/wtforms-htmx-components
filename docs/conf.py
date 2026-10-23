@@ -29,6 +29,7 @@ extensions = [
 
 screenshot_apps = {"examples": "_app:create_app"}
 screenshot_default_locator_padding = 10
+screenshot_default_color_scheme = "auto"
 
 intersphinx_mapping = {
     "python": ("https://docs.python.org/3/", None),
@@ -68,7 +69,8 @@ templates_path = ["_templates"]
 exclude_patterns = ["_build"]
 
 html_theme = "flask"
-html_static_path: list[str] = []
+html_static_path = ["_static"]
+html_css_files = ["color-scheme.css"]
 
 html_context = {
     "project_links": [
