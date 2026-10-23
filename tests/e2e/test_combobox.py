@@ -13,10 +13,16 @@ def _goto(page, nav):
         nav.get_by_role("link", name="Combobox").click()
 
 
+def _wait_for_settle(page):
+    """Wait until htmx 2 has processed the swapped elements."""
+    page.wait_for_function("!document.querySelector('.htmx-settling')")
+
+
 def _clear_country_chip(page):
     """Remove the initial FR chip so the search input shows."""
     page.locator('#country-value .chip[data-value="FR"] .chip-remove').click()
     expect(page.locator("#country-value .chip")).to_have_count(0)
+    _wait_for_settle(page)
 
 
 def test_combobox_single_keystroke_swaps_only_listbox(page, nav):
@@ -77,6 +83,7 @@ def test_combobox_multi_listbox_reopens_after_pick(page, nav):
     page.locator("ul#countries-suggestions button", has_text="Germany").click()
     expect(page.locator("#countries-value .chip", has_text="Germany")).to_be_visible()
     expect(page.locator("input#countries-query")).to_have_value("")
+    _wait_for_settle(page)
 
     # Refill with a query whose match isn't already picked.
     page.locator("input#countries-query").fill("spa")
