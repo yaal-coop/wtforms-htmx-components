@@ -36,8 +36,7 @@ intersphinx_mapping = {
     "flask": ("https://flask.palletsprojects.com/en/stable/", None),
     "markupsafe": ("https://markupsafe.palletsprojects.com/en/stable/", None),
     "wtforms": ("https://wtforms.readthedocs.io/en/stable/", None),
-    # wtforms-htmx is not yet on ReadTheDocs; once it's published, add
-    # ``"wtforms-htmx": ("https://wtforms-htmx.readthedocs.io/en/latest/", None)``.
+    "wtforms-htmx": ("https://wtforms-htmx.readthedocs.io/en/stable/", None),
 }
 
 extlinks = {
