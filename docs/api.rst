@@ -22,10 +22,13 @@ field constructor with the ``query_widget=`` / ``listbox_widget=`` /
 .. autoclass:: QueryInputWidget
 
 .. autoclass:: ListboxWidget
+    :members: render_option
 
 .. autoclass:: ChipsWidget
+    :members: render_chip
 
 .. autoclass:: SingleChipWidget
+    :members: render_chip
 
 .. autoclass:: ComboboxWidget
 

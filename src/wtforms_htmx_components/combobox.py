@@ -7,6 +7,7 @@ field's data is the stored value (single) or list (multi).
 
 from __future__ import annotations
 
+import functools
 import itertools
 from collections.abc import Callable
 from collections.abc import Iterable
@@ -71,7 +72,8 @@ class ListboxWidget:
 
     Each suggestion is a ``<li role="option">`` holding a submit button
     rendered by the field's ``option_widget``. ``multi=True`` sets
-    ``aria-multiselectable="true"``.
+    ``aria-multiselectable="true"``. Override :meth:`render_option` to
+    change the markup of a suggestion.
     """
 
     def __init__(self, *, multi: bool = False) -> None:
@@ -85,12 +87,19 @@ class ListboxWidget:
         attrs.update(kwargs)
         items: list[str] = []
         for opt in field:
-            submit_attrs = opt._form.htmx_submit_attrs(opt)
-            button = opt(label=opt.choice.label, **submit_attrs)
-            li_attrs = html_params(role="option", data_value=opt.choice.value)
-            items.append(f"<li {li_attrs}>{button}</li>")
+            button = functools.partial(opt, **opt._form.htmx_submit_attrs(opt))
+            items.append(self.render_option(opt, button))
 
         return Markup(f"<ul {html_params(**attrs)}>{''.join(items)}</ul>")
+
+    def render_option(self, opt: Any, button: Callable[..., Markup]) -> str:
+        """Render one suggestion.
+
+        ``button`` renders the submit button that picks the suggestion.
+        It takes the button's ``label`` and HTML attributes.
+        """
+        li_attrs = html_params(role="option", data_value=opt.choice.value)
+        return f"<li {li_attrs}>{button(label=opt.choice.label)}</li>"
 
 
 def _locked(field: Any) -> bool:
@@ -121,14 +130,44 @@ def _default_remove_label(label: Any) -> str:
     return f"Remove {label}"
 
 
-class ChipsWidget:
+class _ChipRenderer:
+    _remove_label: Callable[[Any], str]
+
+    def render_chip(self, field: Any, value: Any, label: Any, remove: Any) -> str:
+        """Render one chip.
+
+        ``remove`` is the button field that removes the value. Call it with
+        ``value`` and the button's ``label`` and HTML attributes. It is
+        ``None`` when the field is read-only or disabled.
+        """
+        button = (
+            ""
+            if remove is None
+            else remove(
+                value=value,
+                label="×",
+                id=False,
+                aria_label=self._remove_label(label),
+            )
+        )
+        return _render_chip(
+            name=field.name,
+            value=value,
+            label=label,
+            remove_button=button,
+            disabled=bool(field.flags.disabled),
+        )
+
+
+class ChipsWidget(_ChipRenderer):
     """Render the stored values of a multi combobox as chips.
 
     Each chip has a label, a ``×`` remove button and a hidden input
     that sends the value with the form. ``remove_label`` gives the
     accessible name of the remove button from the chip's label. With the
     ``readonly`` or ``disabled`` flag, the chips have no remove button,
-    and a disabled field does not send its values.
+    and a disabled field does not send its values. Override
+    :meth:`render_chip` to change the markup of a chip.
     """
 
     def __init__(self, remove_label: Callable[[Any], str] | None = None) -> None:
@@ -137,40 +176,21 @@ class ChipsWidget:
     def __call__(self, field: Any, **kwargs: Any) -> Markup:
         attrs: dict[str, Any] = {"id": field.id}
         attrs.update(kwargs)
-        remove = field._form.remove
-        chips: list[str] = []
-        for opt in field:
-            label_text = opt.label.text
-            remove_btn = (
-                ""
-                if _locked(field)
-                else remove(
-                    value=opt.data,
-                    label="×",
-                    id=False,
-                    aria_label=self._remove_label(label_text),
-                )
-            )
-            chips.append(
-                _render_chip(
-                    name=field.name,
-                    value=opt.data,
-                    label=label_text,
-                    remove_button=remove_btn,
-                    disabled=bool(field.flags.disabled),
-                )
-            )
-
+        remove = None if _locked(field) else field._form.remove
+        chips = [
+            self.render_chip(field, opt.data, opt.label.text, remove) for opt in field
+        ]
         return Markup(f"<div {html_params(**attrs)}>{''.join(chips)}</div>")
 
 
-class SingleChipWidget:
+class SingleChipWidget(_ChipRenderer):
     """Render the value of a single combobox as one removable chip.
 
     Without a value, it renders an empty hidden input. The chip's ``×``
     clears the value. ``remove_label`` gives the accessible name of the
     remove button from the chip's label. The library ships no CSS: hiding
     the query input while a chip is shown is up to the application.
+    Override :meth:`render_chip` to change the markup of the chip.
     """
 
     def __init__(
@@ -188,24 +208,8 @@ class SingleChipWidget:
             hidden = html_params(type="hidden", name=field.name, value="")
             return Markup(f"<div {html_params(**attrs)}><input {hidden}></div>")
 
-        label = self._label_for(field.data)
-        remove_btn = (
-            ""
-            if _locked(field)
-            else field._form.remove(
-                value=field.data,
-                label="×",
-                id=False,
-                aria_label=self._remove_label(label),
-            )
-        )
-        chip = _render_chip(
-            name=field.name,
-            value=field.data,
-            label=label,
-            remove_button=remove_btn,
-            disabled=bool(field.flags.disabled),
-        )
+        remove = None if _locked(field) else field._form.remove
+        chip = self.render_chip(field, field.data, self._label_for(field.data), remove)
         return Markup(f"<div {html_params(**attrs)}>{chip}</div>")
 
 

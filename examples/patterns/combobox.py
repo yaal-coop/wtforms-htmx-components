@@ -150,85 +150,47 @@ def _label_for_country(code: str) -> str:
 class FlaggedListboxWidget(ListboxWidget):
     """Listbox with a country flag before each catalog option."""
 
-    def __call__(self, field, **kwargs):
-        attrs = {"role": "listbox", "id": field.id}
-        if self._multi:
-            attrs["aria-multiselectable"] = "true"
+    def render_option(self, opt, button):
+        label = opt.choice.label
+        if opt.choice.value in NAME_BY_CODE:
+            label = _flag_img(opt.choice.value) + label
 
-        attrs.update(kwargs)
-        items = []
-        for opt in field:
-            submit_attrs = opt._form.htmx_submit_attrs(opt)
-            if opt.choice.value in NAME_BY_CODE:
-                label = _flag_img(opt.choice.value) + opt.choice.label
-            else:
-                label = opt.choice.label
-
-            button = opt(label=label, **submit_attrs)
-            li_attrs = html_params(role="option", data_value=opt.choice.value)
-            items.append(f"<li {li_attrs}>{button}</li>")
-
-        return Markup(f"<ul {html_params(**attrs)}>{''.join(items)}</ul>")
+        li_attrs = html_params(role="option", data_value=opt.choice.value)
+        return f"<li {li_attrs}>{button(label=label)}</li>"
 
 
-def _chip(name, value, label, remove_btn):
-    """Render one chip with the example CSS classes."""
-    hidden = html_params(type="hidden", name=name, value=value)
-    return (
-        f"<span {html_params(class_='chip', data_value=value)}>"
-        f'<span class="chip-label">{label}</span>'
-        f"{remove_btn}"
-        f"<input {hidden}>"
-        "</span>"
-    )
-
-
-class StyledSingleChipWidget(SingleChipWidget):
-    """Single chip with the example CSS classes and a flag on catalog values."""
-
-    def __call__(self, field, **kwargs):
-        attrs = {"id": field.id, "class": "single-value"}
-        attrs.update(kwargs)
-        if not field.data:
-            hidden = html_params(type="hidden", name=field.name, value="")
-            return Markup(f"<div {html_params(**attrs)}><input {hidden}></div>")
-
-        label_text = self._label_for(field.data)
-        flag = _flag_img(field.data) if field.data in NAME_BY_CODE else ""
-        remove_btn = field._form.remove(
-            value=field.data,
-            label="×",
-            id=False,
-            class_="chip-remove",
-            aria_label=f"Remove {label_text}",
-        )
-        chip = _chip(field.name, field.data, flag + escape(label_text), remove_btn)
-        return Markup(f"<div {html_params(**attrs)}>{chip}</div>")
-
-
-class StyledChipsWidget(ChipsWidget):
+class StyledChipMixin:
     """Chips with the example CSS classes and a flag on catalog values."""
 
-    def __call__(self, field, **kwargs):
-        attrs = {"class": "chips", "id": field.id}
-        attrs.update(kwargs)
-        remove = field._form.remove
-        chips = []
-        for opt in field:
-            label_text = opt.label.text
-            remove_btn = remove(
-                value=opt.data,
+    def render_chip(self, field, value, label, remove):
+        flag = _flag_img(value) if value in NAME_BY_CODE else ""
+        button = (
+            ""
+            if remove is None
+            else remove(
+                value=value,
                 label="×",
                 id=False,
                 class_="chip-remove",
-                aria_label=f"Remove {label_text}",
+                aria_label=f"Remove {label}",
             )
-            flag = _flag_img(opt.data) if opt.data in NAME_BY_CODE else ""
-            chips.append(
-                _chip(field.name, opt.data, flag + escape(label_text), remove_btn)
-            )
+        )
+        hidden = html_params(type="hidden", name=field.name, value=value)
+        return (
+            f"<span {html_params(class_='chip', data_value=value)}>"
+            f'<span class="chip-label">{flag}{escape(label)}</span>'
+            f"{button}"
+            f"<input {hidden}>"
+            "</span>"
+        )
 
-        return Markup(f"<div {html_params(**attrs)}>{''.join(chips)}</div>")
+
+class StyledSingleChipWidget(StyledChipMixin, SingleChipWidget):
+    """Single chip with the example CSS classes."""
+
+
+class StyledChipsWidget(StyledChipMixin, ChipsWidget):
+    """Chips with the example CSS classes."""
 
 
 def suggest_countries(query, _form):
@@ -256,6 +218,7 @@ class ComboboxForm(ExampleForm):
         placeholder="Type a country…",
         listbox_widget=FlaggedListboxWidget(),
         value_widget=StyledSingleChipWidget(label_for=_label_for_country),
+        value_render_kw={"class": "single-value"},
     )
     country_free = ComboboxSingleField(
         "Country (allow custom)",
@@ -266,6 +229,7 @@ class ComboboxForm(ExampleForm):
         custom_value_label=_add_label,
         listbox_widget=FlaggedListboxWidget(),
         value_widget=StyledSingleChipWidget(label_for=_label_for_country),
+        value_render_kw={"class": "single-value"},
     )
     countries = ComboboxMultiField(
         "Countries (strict)",
@@ -274,6 +238,7 @@ class ComboboxForm(ExampleForm):
         placeholder="Type a country…",
         listbox_widget=FlaggedListboxWidget(multi=True),
         chips_widget=StyledChipsWidget(),
+        chips_render_kw={"class": "chips"},
     )
     countries_free = ComboboxMultiField(
         "Countries (allow custom)",
@@ -284,6 +249,7 @@ class ComboboxForm(ExampleForm):
         custom_value_label=_add_label,
         listbox_widget=FlaggedListboxWidget(multi=True),
         chips_widget=StyledChipsWidget(),
+        chips_render_kw={"class": "chips"},
     )
     save = SubmitField("Save")
 

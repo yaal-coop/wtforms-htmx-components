@@ -298,9 +298,10 @@ text, like a click on any suggestion:
 Customize the rendering
 -----------------------
 
-Each widget can be replaced on its own. To change one, subclass it. The
-example app's ``FlaggedListboxWidget`` adds a flag to each option of
-:class:`~wtforms_htmx_components.ListboxWidget`:
+Each widget can be replaced on its own. To change the markup of one
+suggestion, subclass :class:`~wtforms_htmx_components.ListboxWidget` and
+override :meth:`~wtforms_htmx_components.ListboxWidget.render_option`.
+The example app's ``FlaggedListboxWidget`` adds a flag to each option:
 
 .. code-block:: python
 
@@ -309,17 +310,16 @@ example app's ``FlaggedListboxWidget`` adds a flag to each option of
     from wtforms_htmx_components import ListboxWidget
 
     class FlaggedListboxWidget(ListboxWidget):
-        def __call__(self, field, **kwargs):
-            attrs = {"role": "listbox", "id": field.id, **kwargs}
-            items = []
-            for opt in field:
-                submit_attrs = opt._form.htmx_submit_attrs(opt)
-                label = Markup(flag_img(opt.choice.value)) + opt.choice.label
-                button = opt(label=label, **submit_attrs)
-                li_attrs = html_params(role="option", data_value=opt.choice.value)
-                items.append(f"<li {li_attrs}>{button}</li>")
+        def render_option(self, opt, button):
+            label = Markup(flag_img(opt.choice.value)) + opt.choice.label
+            li_attrs = html_params(role="option", data_value=opt.choice.value)
+            return f"<li {li_attrs}>{button(label=label)}</li>"
 
-            return Markup(f"<ul {html_params(**attrs)}>{''.join(items)}</ul>")
+``button`` renders the submit button that picks the suggestion, with the
+htmx attributes already set. To change the markup of a chip, override
+:meth:`~wtforms_htmx_components.ChipsWidget.render_chip` in the same way.
+Its ``remove`` argument is the button field that removes the value, or
+``None`` when the field is read-only or disabled.
 
 Values and labels can come from the request. Build attributes with
 :func:`~wtforms.widgets.html_params` and pass text through
