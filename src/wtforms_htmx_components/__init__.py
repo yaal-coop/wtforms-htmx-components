@@ -1,4 +1,4 @@
-"""Composite WTForms fields built on wtforms-htmx primitives."""
+"""Ready-made interactive WTForms fields built on wtforms-htmx."""
 
 from __future__ import annotations
 

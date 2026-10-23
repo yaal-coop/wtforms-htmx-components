@@ -1,7 +1,7 @@
 [project]
 name = "wtforms-htmx-components"
 version = "0.1.0.dev0"
-description = "Composite WTForms fields built on wtforms-htmx (combobox)"
+description = "Ready-made interactive WTForms fields built on wtforms-htmx."
 readme = "README.md"
 license = "BSD-3-Clause"
 license-files = ["LICENSE.rst"]

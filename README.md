@@ -1,7 +1,7 @@
 # wtforms-htmx-components
 
-Composite [WTForms](https://wtforms.readthedocs.io/) fields built on top of
-[`wtforms-htmx`](https://github.com/yaal-coop/wtforms-htmx) primitives.
+Ready-made interactive [WTForms](https://wtforms.readthedocs.io/) fields
+built on [wtforms-htmx](https://github.com/yaal-coop/wtforms-htmx).
 
 **Status: alpha, work in progress.**
 

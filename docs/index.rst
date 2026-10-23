@@ -1,8 +1,8 @@
 wtforms-htmx-components
 =======================
 
-Composite :external+wtforms:doc:`WTForms <index>` fields built on the
-`wtforms-htmx <https://github.com/yaal-coop/wtforms-htmx>`_ primitives.
+Ready-made interactive :external+wtforms:doc:`WTForms <index>` fields
+built on `wtforms-htmx <https://github.com/yaal-coop/wtforms-htmx>`_.
 
 Each field packages a recipe of several triggers (typing, suggestions,
 pick, store, chip) into a single ``FormField`` declaration. It needs no
