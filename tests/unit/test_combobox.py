@@ -1015,3 +1015,39 @@ def test_combobox_parts_have_no_inline_validation_of_their_own():
     html = str(F(_formdata({"countries-value": ["FR"]})).countries())
     assert "input changed delay:500ms" not in html
     assert "blur changed" not in html
+
+
+def test_single_suggest_gets_the_form_that_holds_the_field():
+    """Suggest gets the outer form, not the combobox's inner form."""
+    seen = []
+
+    class F(HtmxForm):
+        class Meta:
+            csrf = False
+
+        country = ComboboxSingleField(
+            "Country", suggest=lambda q, form: seen.append(form) or [], label_for=_label
+        )
+
+    form = F(_formdata({"country-query": "fr", "country-value": ""}))
+    assert form.country.suggestions.choices == []
+    assert seen == [form]
+
+
+def test_multi_suggest_gets_the_form_that_holds_the_field():
+    """Suggest gets the outer form, not the combobox's inner form."""
+    seen = []
+
+    class F(HtmxForm):
+        class Meta:
+            csrf = False
+
+        countries = ComboboxMultiField(
+            "Countries",
+            suggest=lambda q, form: seen.append(form) or [],
+            label_for=_label,
+        )
+
+    form = F(_formdata({"countries-query": "fr"}))
+    assert form.countries.suggestions.choices == []
+    assert seen == [form]

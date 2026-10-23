@@ -164,7 +164,8 @@ which is for the single field only.
      - Purpose
    * - ``suggest``
      - Callable ``(query, form) -> Iterable[SelectChoice]``. Returns the
-       options that match the query.
+       options that match the query. ``form`` is the form that holds the
+       field, as for validators.
    * - ``label_for``
      - Callable ``(value) -> str``. Returns the label of a stored value,
        shown on the chips and, for the single field, in the query input.

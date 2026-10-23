@@ -270,7 +270,7 @@ def _make_single_choices(
         if close_on_match and (value := form.value.data) and query == label_for(value):
             return []
 
-        choices = list(itertools.islice(suggest(query, form), max_n))
+        choices = list(itertools.islice(suggest(query, form._parent_form), max_n))
         if allow_custom_value:
             choices = _maybe_append_create(
                 choices, query, custom_value_label, extra_existing_labels=()
@@ -305,7 +305,7 @@ def _make_multi_choices(
         if cap is not None and len(picked) >= cap:
             return []
 
-        gen = (c for c in suggest(query, form) if c.value not in picked)
+        gen = (c for c in suggest(query, form._parent_form) if c.value not in picked)
         choices = list(itertools.islice(gen, max_n))
         if allow_custom_value and query not in picked:
             picked_labels = tuple(str(label_for(v)).lower() for v in picked)
