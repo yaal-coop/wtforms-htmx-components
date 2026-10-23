@@ -16,3 +16,7 @@ repos:
     rev: 8577ec017145d76a0b954ebb7cb3169d4303014c  # frozen: 3.0.11
     hooks:
       - id: djhtml
+  - repo: https://github.com/zizmorcore/zizmor-pre-commit
+    rev: v1.31.1
+    hooks:
+      - id: zizmor
