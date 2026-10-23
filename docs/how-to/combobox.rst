@@ -55,7 +55,7 @@ Single, strict
         save = SubmitField("Save")
 
 ``form.country.data`` is the picked value, for example ``"FR"``.
-:meth:`~wtforms.Form.populate_obj` writes it to the ``country``
+:meth:`~wtforms.form.Form.populate_obj` writes it to the ``country``
 attribute. The validators get the form that holds the field, as for any
 field, and ``field.data`` is the picked value. Their errors show in
 ``form.country.errors``.
@@ -351,17 +351,17 @@ What the fields build
 ---------------------
 
 :class:`~wtforms_htmx_components.ComboboxSingleField` is a
-:class:`~wtforms.FormField`. Its inner form holds these fields:
+:class:`~wtforms.fields.FormField`. Its inner form holds these fields:
 
-- ``query``: a :class:`~wtforms.StringField` for the search input;
-- ``search``: a :class:`~wtforms.ButtonField` that refreshes the
+- ``query``: a :class:`~wtforms.fields.StringField` for the search input;
+- ``search``: a :class:`~wtforms.fields.ButtonField` that refreshes the
   suggestions without JavaScript;
-- ``suggestions``: a :class:`~wtforms.SelectField`. Its ``choices``
+- ``suggestions``: a :class:`~wtforms.fields.SelectField`. Its ``choices``
   callable calls ``suggest`` on each request. Its ``option_widget`` is
   :class:`~wtforms.widgets.Button`, so each option is a ``<button>``;
-- ``value``: a :class:`~wtforms.HiddenField` that stores the picked
+- ``value``: a :class:`~wtforms.fields.HiddenField` that stores the picked
   value, shown as a chip;
-- ``remove``: a :class:`~wtforms.ButtonField`, the chip's ``×``. It clears
+- ``remove``: a :class:`~wtforms.fields.ButtonField`, the chip's ``×``. It clears
   the value and the query.
 
 The triggers are:
@@ -381,7 +381,7 @@ stored value (``close_listbox_on_match``).
 
 The multi field has the same shape, with these differences:
 
-- ``value`` is a :class:`~wtforms.SelectMultipleField`, shown as chips by
+- ``value`` is a :class:`~wtforms.fields.SelectMultipleField`, shown as chips by
   :class:`~wtforms_htmx_components.ChipsWidget`;
 - a click on an option adds its value with
   :func:`~wtforms_htmx.mutations.value_add` and clears the query with
