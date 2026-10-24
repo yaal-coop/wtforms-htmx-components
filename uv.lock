@@ -1607,14 +1607,14 @@ wheels = [
 
 [[package]]
 name = "wtforms-htmx"
-version = "0.1.0"
+version = "0.1.2"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "wtforms" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/af/11/b144db0f34511455575b97c8429fb15a7650117aea614702e1ba22c7791a/wtforms_htmx-0.1.0.tar.gz", hash = "sha256:dc601ce30bf25cd92957677abf95c3a8fa3b18f258cc3e0cf32ab2270777a915", size = 28961, upload-time = "2026-10-23T21:42:43.762Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/1e/bf/ec21dd7f1ea5da7dd75456fdc8664d98f2dd382a3f3bc1912d0063242e31/wtforms_htmx-0.1.2.tar.gz", hash = "sha256:2b652a3adf50fa0bd15fbd366d7a51e1cfba38a361c697b51ec16f8146c00144", size = 29602, upload-time = "2026-10-24T22:55:39.172Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/0c/46/0401fc19a87e51d85a43d5a4cd9b858aeae9c77ced755d1b10348272225b/wtforms_htmx-0.1.0-py3-none-any.whl", hash = "sha256:a9655ba440c3036d0dfe112ce114bf00d8344c0086b0a03f8cead5294d3b968a", size = 31155, upload-time = "2026-10-23T21:42:42.49Z" },
+    { url = "https://files.pythonhosted.org/packages/ec/59/0c973bfebc389413d5ff4102044607aa5a44b93638c324e99fdb63ca38f1/wtforms_htmx-0.1.2-py3-none-any.whl", hash = "sha256:8c30b7cdd50a4c070668ff9acac21f13a628886af12e77bbac8ca26ddab49974", size = 31858, upload-time = "2026-10-24T22:55:37.811Z" },
 ]
 
 [[package]]
@@ -1669,7 +1669,7 @@ test = [
 [package.metadata]
 requires-dist = [
     { name = "wtforms", specifier = ">=3.3.0,<4" },
-    { name = "wtforms-htmx", specifier = ">=0.1.0" },
+    { name = "wtforms-htmx", specifier = ">=0.1.2" },
 ]
 
 [package.metadata.requires-dev]

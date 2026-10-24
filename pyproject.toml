@@ -26,7 +26,7 @@ classifiers = [
 requires-python = ">=3.11"
 dependencies = [
     "wtforms>=3.3.0,<4",
-    "wtforms-htmx>=0.1.0",
+    "wtforms-htmx>=0.1.2",
 ]
 
 [project.urls]
