@@ -1051,3 +1051,90 @@ def test_multi_suggest_gets_the_form_that_holds_the_field():
     form = F(_formdata({"countries-query": "fr"}))
     assert form.countries.suggestions.choices == []
     assert seen == [form]
+
+
+class _OpenSingleForm(HtmxForm):
+    class Meta:
+        csrf = False
+
+    country = ComboboxSingleField(
+        "Country", suggest=_suggest, label_for=_label, min_query_length=0
+    )
+
+
+class _OpenMultiForm(HtmxForm):
+    class Meta:
+        csrf = False
+
+    countries = ComboboxMultiField(
+        "Countries", suggest=_suggest, label_for=_label, min_query_length=0
+    )
+
+
+def _values(field):
+    return [choice.value for choice in field.suggestions.choices]
+
+
+def test_min_query_length_zero_closes_the_listbox_on_page_load():
+    """An empty query gives no suggestions on the first render."""
+    assert _values(_OpenSingleForm().country) == []
+
+
+def test_min_query_length_zero_closes_the_listbox_after_another_submit():
+    """An empty query gives no suggestions when another button submits the form."""
+    form = _OpenSingleForm(_formdata({"country-query": "", "country-value": ""}))
+    assert _values(form.country) == []
+
+
+def test_min_query_length_zero_suggests_on_search():
+    """The search button with an empty query shows the suggestions."""
+    form = _OpenSingleForm(
+        _formdata({"country-query": "", "country-value": "", "country-search": ""})
+    )
+    assert _values(form.country) == CODES
+
+
+def test_min_query_length_zero_suggests_on_a_listbox_request():
+    """An htmx request from the listbox, on focus, shows the suggestions."""
+    form = _OpenSingleForm(
+        _formdata({"country-query": "", "country-value": ""}),
+        headers={"HX-Request": "true", "HX-Trigger": "country-suggestions"},
+    )
+    assert _values(form.country) == CODES
+
+
+def test_min_query_length_zero_multi_suggests_the_rest_after_a_pick():
+    """After a pick, the multi listbox suggests the values not picked yet."""
+    form = _OpenMultiForm(
+        _formdata(
+            {
+                "countries-query": "",
+                "countries-value": "FR",
+                "countries-suggestions": "DE",
+            }
+        )
+    )
+    assert _values(form.countries) == ["JP"]
+
+
+def test_min_query_length_zero_listens_to_the_focus():
+    """The listbox also refreshes when the query input gets the focus."""
+    html = str(_OpenSingleForm().country.suggestions())
+    assert "focusin from:body" in html
+
+
+def test_min_query_length_ignores_a_shorter_query():
+    """A query shorter than min_query_length gives no suggestions."""
+
+    class F(HtmxForm):
+        class Meta:
+            csrf = False
+
+        country = ComboboxSingleField(
+            "Country", suggest=_suggest, label_for=_label, min_query_length=2
+        )
+
+    form = F(_formdata({"country-query": "f", "country-value": ""}))
+    assert _values(form.country) == []
+    form = F(_formdata({"country-query": "fr", "country-value": ""}))
+    assert _values(form.country) == ["FR"]

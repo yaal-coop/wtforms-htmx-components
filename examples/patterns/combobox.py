@@ -1,4 +1,4 @@
-"""Four comboboxes in one form: single and multi, strict and free.
+"""Comboboxes in one form: single and multi, strict and free.
 
 ======  =====================================================  ===========================
 .       strict (catalog only)                                  ``allow_custom_value=True``
@@ -9,7 +9,8 @@ multi   :class:`~wtforms_htmx_components.ComboboxMultiField`   same + "create" o
 
 The strict comboboxes accept only catalog values. The free ones add an
 "Add ..." option when the query is not in the catalog. Picking it stores
-the typed text.
+the typed text. The last combobox has a short list of continents. With
+``min_query_length=0``, it shows them all when its input gets the focus.
 
 The example subclasses the widgets:
 
@@ -128,6 +129,7 @@ class ComboboxData:
     country_free: str = ""
     countries: list[str] = dc_field(default_factory=lambda: ["FR", "JP"])
     countries_free: list[str] = dc_field(default_factory=list)
+    continents: list[str] = dc_field(default_factory=list)
 
 
 _STATE["combobox"] = ComboboxData()
@@ -203,12 +205,29 @@ def suggest_countries(query, _form):
     )
 
 
+CONTINENTS = [
+    "Africa",
+    "Antarctica",
+    "Asia",
+    "Europe",
+    "North America",
+    "Oceania",
+    "South America",
+]
+
+
+def suggest_continents(query, _form):
+    """Match continents by name substring."""
+    q = query.lower()
+    return (SelectChoice(name, name) for name in CONTINENTS if q in name.lower())
+
+
 def _add_label(query: str) -> str:
     return f'Add "{query}"'
 
 
 class ComboboxForm(ExampleForm):
-    """Four combobox declarations in one form: single/multi × strict/free."""
+    """Combobox declarations in one form: single/multi × strict/free."""
 
     country = ComboboxSingleField(
         "Country (strict)",
@@ -251,6 +270,14 @@ class ComboboxForm(ExampleForm):
         chips_widget=StyledChipsWidget(),
         chips_render_kw={"class": "chips"},
     )
+    continents = ComboboxMultiField(
+        "Continents",
+        suggest=suggest_continents,
+        placeholder="Pick continents…",
+        min_query_length=0,
+        chips_widget=StyledChipsWidget(),
+        chips_render_kw={"class": "chips"},
+    )
     save = SubmitField("Save")
 
 
@@ -271,7 +298,8 @@ def combobox():
     form.populate_obj(state)
     flash(
         f"Saved: country={state.country!r}, country_free={state.country_free!r}, "
-        f"countries={state.countries!r}, countries_free={state.countries_free!r}.",
+        f"countries={state.countries!r}, countries_free={state.countries_free!r}, "
+        f"continents={state.continents!r}.",
         "success",
     )
     return redirect(url_for("main.combobox"))

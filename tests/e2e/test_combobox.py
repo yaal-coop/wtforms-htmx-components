@@ -1,8 +1,9 @@
 """End-to-end tests of the combobox example.
 
-The page has four comboboxes: ``country`` (single, strict),
-``country_free`` (single, free), ``countries`` (multi, strict) and
-``countries_free`` (multi, free).
+The page has five comboboxes: ``country`` (single, strict),
+``country_free`` (single, free), ``countries`` (multi, strict),
+``countries_free`` (multi, free) and ``continents`` (multi, suggested
+on focus).
 """
 
 from playwright.sync_api import expect
@@ -385,3 +386,27 @@ def test_combobox_resume_typing_reopens_after_escape(page, nav):
     query.press("a")
     expect(listbox.locator("li[role='option']").first).to_be_visible()
     expect(listbox).to_be_visible()
+
+
+def test_combobox_min_query_length_zero_suggests_on_focus(page, nav):
+    """The continents listbox is empty on load and lists every continent on focus."""
+    _goto(page, nav)
+    options = page.locator("#continents-suggestions li[role='option']")
+    expect(options).to_have_count(0)
+
+    page.locator("input#continents-query").focus()
+    expect(options).to_have_count(7)
+    _wait_for_settle(page)
+
+    page.locator("input#continents-query").fill("am")
+    expect(options).to_have_count(2)
+
+
+def test_combobox_min_query_length_zero_suggests_the_rest_after_a_pick(page, nav):
+    """After a pick, the listbox lists the continents not picked yet."""
+    _goto(page, nav)
+    page.locator("input#continents-query").focus()
+    page.locator('#continents-suggestions button[value="Asia"]').click()
+
+    expect(page.locator('#continents-value .chip[data-value="Asia"]')).to_have_count(1)
+    expect(page.locator("#continents-suggestions li[role='option']")).to_have_count(6)

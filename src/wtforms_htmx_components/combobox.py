@@ -30,9 +30,12 @@ from wtforms.validators import ValidationError
 from wtforms.widgets import Button
 from wtforms.widgets import html_params
 from wtforms_htmx import HtmxForm
+from wtforms_htmx import HtmxMeta
+from wtforms_htmx.headers import _parse_request
 from wtforms_htmx.mutations import value_add
 from wtforms_htmx.mutations import value_remove
 from wtforms_htmx.mutations import value_set
+from wtforms_htmx.tree import _root_of
 
 from .validators import MaxItems
 
@@ -251,24 +254,50 @@ def _make_pick_label(label_for: Callable[[Any], str]) -> Callable[..., None]:
     return _pick
 
 
+def _suggestions_asked(form: Any) -> bool:
+    """Tell whether the user asked the combobox for its suggestions.
+
+    Without JavaScript, the user clicked the search button or a suggestion.
+    With htmx, the listbox sent the request, on focus or while typing.
+    """
+    submitter = form.submitter
+    if submitter is not None and (
+        submitter is form.suggestions or submitter is getattr(form, "search", None)
+    ):
+        return True
+
+    headers = _root_of(form)._htmx_headers
+    return _parse_request(headers).source_id == form.suggestions.id
+
+
+def _query_event(min_query_length: int) -> str | None:
+    """Return the event of the query declaration: also focus for an empty query."""
+    if min_query_length:
+        return None
+
+    return f"{HtmxMeta.htmx_default_trigger}, focus"
+
+
 def _make_single_choices(
     suggest: Callable[[str, Any], Iterable[SelectChoice]],
     label_for: Callable[[Any], str],
     max_n: int,
+    min_length: int,
     close_on_match: bool,
     allow_custom_value: bool,
     custom_value_label: Callable[[str], str] | None,
 ) -> Callable[..., list[SelectChoice]]:
     """Build the choices callable of the single combobox suggestions.
 
-    No suggestions for an empty query, nor with close_on_match when the
-    query is the label of the stored value. With allow_custom_value, a
-    "create" choice for the raw query comes last.
+    No suggestions for a query shorter than min_length, nor with
+    close_on_match when the query is the label of the stored value. An
+    empty query only gets suggestions when the user asks for them. With
+    allow_custom_value, a "create" choice for the raw query comes last.
     """
 
     def _choices(form: Any, _field: Any) -> list[SelectChoice]:
         query = (form.query.data or "").strip()
-        if not query:
+        if len(query) < min_length or not (query or _suggestions_asked(form)):
             return []
 
         if close_on_match and (value := form.value.data) and query == label_for(value):
@@ -289,20 +318,23 @@ def _make_multi_choices(
     suggest: Callable[[str, Any], Iterable[SelectChoice]],
     label_for: Callable[[Any], str],
     max_n: int,
+    min_length: int,
     cap: int | None,
     allow_custom_value: bool,
     custom_value_label: Callable[[str], str] | None,
 ) -> Callable[..., list[SelectChoice]]:
     """Build the choices callable of the multi combobox suggestions.
 
-    Picked values are left out, and an empty query or a reached MaxItems
-    cap gives no suggestions. With allow_custom_value, a "create" choice
-    for the raw query comes last unless the query is already picked.
+    Picked values are left out. A query shorter than min_length or a
+    reached MaxItems cap gives no suggestions. An empty query only gets
+    suggestions when the user asks for them. With allow_custom_value, a
+    "create" choice for the raw query comes last unless the query is
+    already picked.
     """
 
     def _choices(form: Any, _field: Any) -> list[SelectChoice]:
         query = (form.query.data or "").strip()
-        if not query:
+        if len(query) < min_length or not (query or _suggestions_asked(form)):
             return []
 
         picked = list(form.value.data or [])
@@ -488,6 +520,7 @@ def _build_single_inner_form(
     choices_cb: Callable[..., list[SelectChoice]],
     pick_label: Callable[..., None],
     label_for: Callable[[Any], str],
+    query_event: str | None,
     placeholder: str | None,
     search_label: str | None,
     query_widget: Any,
@@ -502,7 +535,7 @@ def _build_single_inner_form(
 
     attrs: dict[str, Any] = {
         "query": StringField(render_kw=query_render_kw, widget=query_widget).triggers(
-            "suggestions"
+            "suggestions", on=query_event
         ),
         "suggestions": (
             SelectField(
@@ -577,6 +610,7 @@ class ComboboxSingleField(ComboboxField):
         placeholder: str | None = None,
         search_label: str | None = "Search",
         max_suggestions: int = 10,
+        min_query_length: int = 1,
         close_listbox_on_match: bool = True,
         allow_custom_value: bool = False,
         custom_value_label: Callable[[str], str] | None = None,
@@ -595,12 +629,14 @@ class ComboboxSingleField(ComboboxField):
                 suggest,
                 label_for,
                 max_suggestions,
+                min_query_length,
                 close_listbox_on_match,
                 allow_custom_value,
                 custom_value_label,
             ),
             pick_label=_make_pick_label(label_for),
             label_for=label_for,
+            query_event=_query_event(min_query_length),
             placeholder=placeholder,
             search_label=search_label,
             query_widget=query_widget or QueryInputWidget(),
@@ -628,6 +664,7 @@ def _build_multi_inner_form(
     *,
     choices_cb: Callable[..., list[SelectChoice]],
     value_choices_cb: Callable[..., list[SelectChoice]],
+    query_event: str | None,
     placeholder: str | None,
     search_label: str | None,
     query_widget: Any,
@@ -642,7 +679,7 @@ def _build_multi_inner_form(
 
     attrs: dict[str, Any] = {
         "query": StringField(render_kw=query_render_kw, widget=query_widget).triggers(
-            "suggestions"
+            "suggestions", on=query_event
         ),
         "value": SelectMultipleField(
             choices=value_choices_cb,
@@ -712,6 +749,7 @@ class ComboboxMultiField(ComboboxField):
         placeholder: str | None = None,
         search_label: str | None = "Search",
         max_suggestions: int = 10,
+        min_query_length: int = 1,
         allow_custom_value: bool = False,
         custom_value_label: Callable[[str], str] | None = None,
         remove_label: Callable[[Any], str] | None = None,
@@ -729,11 +767,13 @@ class ComboboxMultiField(ComboboxField):
                 suggest,
                 label_for,
                 max_suggestions,
+                min_query_length,
                 MaxItems.tightest_cap(validators),
                 allow_custom_value,
                 custom_value_label,
             ),
             value_choices_cb=_make_value_choices(label_for),
+            query_event=_query_event(min_query_length),
             placeholder=placeholder,
             search_label=search_label,
             query_widget=query_widget or QueryInputWidget(),

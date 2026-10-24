@@ -191,6 +191,12 @@ which is for the single field only.
        the button, so the field needs htmx.
    * - ``max_suggestions``
      - Maximum number of options in the listbox. Default ``10``.
+   * - ``min_query_length``
+     - Minimum length of the query before the listbox shows options.
+       Default ``1``. With ``0``, the listbox shows the options for an
+       empty query when the query input gets the focus, or when the user
+       clicks the search button. Keep it for short lists: ``suggest``
+       gets an empty query.
    * - ``close_listbox_on_match`` (single only)
      - When ``True`` (default), the listbox is empty when the query is
        the label of the stored value.

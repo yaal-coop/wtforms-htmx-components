@@ -105,3 +105,13 @@ def test_enter_in_a_query_searches_without_javascript(browser, live_server):
     expect(page.locator('#country-value .chip[data-value="FR"]')).to_have_count(1)
     expect(page.locator('#countries-value .chip[data-value="FR"]')).to_have_count(1)
     context.close()
+
+
+def test_min_query_length_zero_search_lists_every_option_nojs(page_nojs, nav_nojs):
+    """Search with an empty query lists every continent."""
+    _goto(page_nojs, nav_nojs)
+    options = page_nojs.locator("#continents-suggestions li[role='option']")
+    expect(options).to_have_count(0)
+
+    _submit(page_nojs, "button[name='continents-search']")
+    expect(options).to_have_count(7)

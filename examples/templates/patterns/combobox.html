@@ -11,11 +11,12 @@
 {% block content %}
   <hgroup>
     <h1>Combobox</h1>
-    <p>Four declarations in one form: <code>ComboboxSingleField</code>
+    <p>Several declarations in one form: <code>ComboboxSingleField</code>
       and <code>ComboboxMultiField</code>, each in strict mode (catalog
       values only) and in <code>allow_custom_value=True</code> mode
       (the listbox surfaces an <em>Add ‹query›</em> option for
-      off-catalog input).</p>
+      off-catalog input). The last one, with
+      <code>min_query_length=0</code>, lists its options on focus.</p>
   </hgroup>
 
   <form method="post">
@@ -76,6 +77,21 @@
               {{ form.countries_free.suggestions() }}
             </div>
             {{ form.countries_free.search() }}
+          </div>
+        </div>
+      </section>
+
+      <section class="combobox-cell">
+        <h2>Multi, suggested on focus</h2>
+        <div class="combobox-wrap">
+          {{ form.continents.label }}
+          <div role="group" class="combobox-search">
+            <div class="combobox multi-combobox multi-combobox-inline">
+              {{ form.continents.value() }}
+              {{ form.continents.query() }}
+              {{ form.continents.suggestions() }}
+            </div>
+            {{ form.continents.search() }}
           </div>
         </div>
       </section>
