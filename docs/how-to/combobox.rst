@@ -202,8 +202,8 @@ which is for the single field only.
        the label of the stored value.
    * - ``allow_custom_value``
      - When ``True``, the listbox ends with a *create* option for the
-       query. Default ``False``: only suggested values can be stored. See
-       :ref:`pattern-combobox-custom-value`.
+       query. Default ``False``: the listbox only offers suggested
+       values. See :ref:`pattern-combobox-custom-value`.
    * - ``custom_value_label``
      - Optional ``(query) -> str`` for the label of the create option,
        for example ``lambda q: f'Add "{q}"'``. Default ``None``: the label
@@ -284,8 +284,13 @@ field, as the default widgets do.
 Accept free-form values
 -----------------------
 
-By default, a combobox is strict: only values returned by ``suggest`` end
-up in ``.data``. With ``allow_custom_value=True``, the listbox ends with a
+By default, a combobox is strict: the listbox only offers values returned
+by ``suggest``. The field does not check the posted values against the
+catalog, so a forged request can still store any value. To reject it, add
+a validator that checks the values, or a ``coerce`` that raises
+:exc:`ValueError` for an unknown value.
+
+With ``allow_custom_value=True``, the listbox ends with a
 *create* option whose value is the query. A click on it stores the typed
 text, like a click on any suggestion:
 
