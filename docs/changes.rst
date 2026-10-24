@@ -1,8 +1,10 @@
 Changes
 =======
 
-Unreleased
-----------
+Version 0.1.1
+-------------
+
+Released 2026-10-25
 
 - ``min_query_length`` sets the query length from which the listbox
   shows options. With ``0``, a short list shows all its options when
