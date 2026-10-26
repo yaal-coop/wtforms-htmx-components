@@ -4,6 +4,10 @@ repos:
     hooks:
       - id: ruff-check
       - id: ruff-format
+  - repo: https://github.com/astral-sh/uv-pre-commit
+    rev: eeca16c54e09b4d9a848259e46bae14737944348  # frozen: 0.13.5
+    hooks:
+      - id: uv-lock
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: 3e8a8703264a2f4a69428a0aa4dcb512790b2c8c  # frozen: v6.0.0
     hooks:
