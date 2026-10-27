@@ -70,18 +70,18 @@ The example subclasses the widgets:
        await wait(700);
      };
      await wait(500);
-     // Starts with FR and JP: add PS, remove PS, remove JP, add JP.
+     // Starts with CU and PS: add UA, remove UA, remove PS, add PS.
+     await typeQuery('ukr');
+     await wait(300);
+     await pickByCode('UA');
+     await wait(500);
+     await removeChip('UA');
+     await wait(400);
+     await removeChip('PS');
+     await wait(400);
      await typeQuery('pal');
      await wait(300);
      await pickByCode('PS');
-     await wait(500);
-     await removeChip('PS');
-     await wait(400);
-     await removeChip('JP');
-     await wait(400);
-     await typeQuery('jap');
-     await wait(300);
-     await pickByCode('JP');
      $('#countries-query').blur();
      await wait(500);
 

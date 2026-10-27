@@ -1,12 +1,15 @@
 /* The theme has no dark mode: show the light captures even when the OS is
-   dark, and the dark ones only when Dark Reader darkens the page. */
+   dark, and the dark ones only when Dark Reader darkens the page.
+   sphinxcontrib-screenshot hides the light captures when the OS is dark.
+   The media query below undoes that. The figure selector beats
+   basic.css's figure.align-default. */
+figure.only-dark {
+    display: none;
+}
+
 @media (prefers-color-scheme: dark) {
     .only-light {
         display: revert;
-    }
-
-    .only-dark {
-        display: none;
     }
 }
 

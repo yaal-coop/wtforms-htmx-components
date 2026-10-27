@@ -15,7 +15,7 @@ def create_app(sphinx_app):
     from examples import create_app as create_examples_app
 
     _STATE["combobox"].country = "FR"
-    _STATE["combobox"].countries = ["FR", "JP"]
+    _STATE["combobox"].countries = ["CU", "PS"]
 
     app = create_examples_app()
     app.config["HTMX_BOOST_DISABLED"] = True

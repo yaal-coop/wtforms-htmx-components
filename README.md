@@ -10,6 +10,13 @@
 Ready-made interactive [WTForms](https://wtforms.readthedocs.io/) fields
 built on [wtforms-htmx](https://github.com/yaal-coop/wtforms-htmx).
 
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="https://wtforms-htmx-components.readthedocs.io/en/latest/_static/screencasts/combobox-dark.webp">
+    <img src="https://wtforms-htmx-components.readthedocs.io/en/latest/_static/screencasts/combobox-light.webp" width="700" alt="Typing in a combobox shows suggestions. Picking one adds a chip.">
+  </picture>
+</p>
+
 **Status: alpha, work in progress.**
 
 Each field packages a recipe of several triggers (typing, suggestions,
