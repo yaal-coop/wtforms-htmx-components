@@ -1,6 +1,6 @@
 [project]
 name = "wtforms-htmx-components"
-version = "0.1.1"
+version = "0.1.2.dev0"
 description = "Ready-made interactive WTForms fields built on wtforms-htmx."
 readme = "README.md"
 license = "BSD-3-Clause"
