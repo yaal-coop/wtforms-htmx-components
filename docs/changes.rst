@@ -9,6 +9,8 @@ Unreleased
   CSS use these attributes instead of the CSS classes of the example
   app. A template that renders the parts one by one must put
   ``data-combobox`` on the element that holds them.
+- The npm package ``wtforms-htmx-components`` ships the combobox script,
+  as ``combobox.js``, and the CSS rules it needs, as ``combobox.css``.
 
 Version 0.1.2
 -------------

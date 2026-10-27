@@ -48,6 +48,16 @@ class TagsForm(HtmxForm):
     save = SubmitField()
 ```
 
+Keyboard navigation is optional. The npm package of the same name
+ships the script and its CSS:
+
+```sh
+npm install wtforms-htmx-components
+```
+
+See the
+[combobox guide](https://wtforms-htmx-components.readthedocs.io/en/stable/how-to/combobox/#add-keyboard-navigation).
+
 Run the example app:
 
 ```sh

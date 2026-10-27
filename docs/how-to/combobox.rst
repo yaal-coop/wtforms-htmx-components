@@ -133,6 +133,8 @@ on a click on ``save``:
 
         return render_template("combobox.html", form=form)
 
+.. _combobox-render:
+
 Render the field
 ----------------
 
@@ -500,52 +502,71 @@ swapped. After a pick or a click on a chip's ``×``, the query input gets
 Add keyboard navigation
 -----------------------
 
-The library ships no JavaScript. The example app's
-``combobox-enhance.js`` adds these keys on top of :kbd:`Tab` and
-:kbd:`Enter`: arrows, :kbd:`Home` and :kbd:`End`, :kbd:`Esc` to close,
-:kbd:`Backspace` to remove the last chip, and :kbd:`Enter` to pick the
-first suggestion. To use it, copy it to the application's static
-directory and load it on the combobox page.
+The Python package ships no JavaScript. The npm package
+``wtforms-htmx-components`` adds keyboard navigation to the combobox,
+per the ARIA combobox pattern. It holds two files:
 
-The script relies on the markup of the library only:
+- ``combobox.js`` handles the keys and the focus;
+- ``combobox.css`` hides the listbox when the script closes it.
+
+Both files work with htmx 2 and htmx 4, and need no build step.
+
+Install the files
+~~~~~~~~~~~~~~~~~
+
+Install the package with npm, then copy the two files to the static
+directory of the application:
+
+.. code-block:: console
+
+    $ npm install wtforms-htmx-components
+    $ cp node_modules/wtforms-htmx-components/combobox.{js,css} static/
+
+Use the same version as the Python package: the script relies on the
+markup that this version renders. jsDelivr also serves the files, at
+``https://cdn.jsdelivr.net/npm/wtforms-htmx-components@<VERSION>/combobox.js``.
+
+Load the files
+~~~~~~~~~~~~~~
+
+Load the script with a ``defer`` tag, and the stylesheet before the
+application's own CSS:
+
+.. code-block:: jinja
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='combobox.css') }}">
+    <script src="{{ url_for('static', filename='combobox.js') }}" defer></script>
+
+The script sets its handlers on the document, so they keep working after
+each htmx swap.
+
+Mark the combobox
+~~~~~~~~~~~~~~~~~
+
+The script finds the combobox with the attributes and roles that the
+library renders:
 
 - ``data-combobox`` on the element that holds the parts of the field;
 - ``role="combobox"`` on the query input;
 - ``role="option"`` around each suggestion button;
 - ``data-combobox-remove`` on each chip's ``×``.
 
-The library sets all of them, except ``data-combobox`` when the parts
-are rendered one by one. Custom widgets keep ``data-combobox-remove`` as
-long as they render the button with the ``remove`` field.
+``{{ form.country() }}`` renders all of them. When the parts are
+rendered one by one, put ``data-combobox`` on the element that holds
+them, as in :ref:`combobox-render`. Custom chip widgets keep
+``data-combobox-remove`` as long as they render the button with the
+``remove`` field.
 
-It is plain JavaScript. Its handlers sit on the document, so they keep
-working after each htmx swap:
+The script sets ``data-combobox-closed`` on the ``data-combobox``
+element after :kbd:`Esc`, or when the focus leaves the combobox.
+``combobox.css`` hides the listbox while this attribute is set. Typing,
+a click on the input, or focus that comes back from outside removes the
+attribute. Without JavaScript, the listbox stays visible.
 
-.. literalinclude:: ../../examples/static/combobox-enhance.js
-   :language: javascript
-   :linenos:
+Use the keys
+~~~~~~~~~~~~
 
-Load it with a ``defer`` script tag:
-
-.. code-block:: jinja
-
-    <script src="{{ url_for('static', filename='combobox-enhance.js') }}" defer></script>
-
-:kbd:`Esc` sets a ``data-combobox-closed`` attribute on the
-``data-combobox`` element. Add a CSS rule so that this attribute hides
-the listbox, even while ``:focus-within`` matches:
-
-.. code-block:: css
-
-    [data-combobox]:not(:focus-within) [role="listbox"],
-    [data-combobox][data-combobox-closed="true"] [role="listbox"] {
-      display: none;
-    }
-
-The script removes the attribute when the user types, clicks the input,
-or moves the focus back into the combobox from outside.
-
-The keys:
+The script adds these keys on top of :kbd:`Tab` and :kbd:`Enter`:
 
 ================================ =============================================
 Key                              Action
@@ -564,3 +585,12 @@ Key                              Action
 :kbd:`Enter` on a suggestion     Activate the submit button (native)
 :kbd:`Backspace` in empty input  Remove the last chip (multi field)
 ================================ =============================================
+
+Read the source
+~~~~~~~~~~~~~~~
+
+``combobox.js`` is plain JavaScript, with no dependency:
+
+.. literalinclude:: ../../js/combobox.js
+   :language: javascript
+   :linenos:

@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import os
+from pathlib import Path
 
 from flask import Blueprint
 from flask import Flask
@@ -12,6 +13,14 @@ from flask import request
 from flask import url_for
 
 bp = Blueprint("main", __name__)
+
+# Serves the files of the npm package, so the examples use them as published.
+js_bp = Blueprint(
+    "js",
+    __name__,
+    static_folder=Path(__file__).parent.parent / "js",
+    static_url_path="/js",
+)
 
 
 @bp.route("/")
@@ -48,6 +57,7 @@ def create_app() -> Flask:
         }
 
     app.register_blueprint(bp)
+    app.register_blueprint(js_bp)
     return app
 
 

@@ -1,0 +1,32 @@
+{
+  "name": "wtforms-htmx-components",
+  "version": "0.0.0",
+  "description": "Keyboard navigation for the wtforms-htmx-components combobox.",
+  "keywords": [
+    "wtforms",
+    "htmx",
+    "combobox",
+    "aria"
+  ],
+  "homepage": "https://wtforms-htmx-components.readthedocs.io/",
+  "bugs": "https://github.com/yaal-coop/wtforms-htmx-components/issues",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yaal-coop/wtforms-htmx-components.git",
+    "directory": "js"
+  },
+  "license": "BSD-3-Clause",
+  "author": "Éloi Rivard <eloi@yaal.coop>",
+  "files": [
+    "combobox.js",
+    "combobox.css"
+  ],
+  "exports": {
+    "./combobox.js": "./combobox.js",
+    "./combobox.css": "./combobox.css"
+  },
+  "sideEffects": true,
+  "scripts": {
+    "prepack": "cp ../LICENSE.rst ."
+  }
+}

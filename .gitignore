@@ -18,3 +18,4 @@ __pycache__/
 /.hatch-build-staging/
 /node_modules/
 /examples/static/vendor/
+/js/LICENSE.rst

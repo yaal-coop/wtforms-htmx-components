@@ -38,7 +38,7 @@ jobs:
 
   release:
     name: create Github release
-    needs: publish
+    needs: [publish, publish-npm]
     runs-on: ubuntu-24.04
     permissions:
       contents: write  # create the GitHub release
@@ -67,3 +67,31 @@ jobs:
 
       - name: Push build artifacts to PyPI
         uses: pypa/gh-action-pypi-publish@7245906fb61fa33a13554f9d5fb856fe61758086 # v1.14.3
+
+  publish-npm:
+    name: release to npm
+    needs: build
+    runs-on: ubuntu-24.04
+
+    environment:
+      name: npm-release
+      url: https://www.npmjs.com/package/wtforms-htmx-components
+    permissions:
+      contents: read
+      id-token: write  # trusted publishing to npm
+
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 24
+          registry-url: https://registry.npmjs.org
+          package-manager-cache: false
+      - name: Set the version from the tag
+        run: npm version "$GITHUB_REF_NAME" --no-git-tag-version
+        working-directory: js
+      - name: Publish to npm
+        run: npm publish --access public
+        working-directory: js

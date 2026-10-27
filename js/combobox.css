@@ -1,0 +1,5 @@
+/* combobox.js sets data-combobox-closed after Esc, or when the focus leaves
+   the combobox. Without JavaScript, the listbox stays visible. */
+[data-combobox][data-combobox-closed="true"] [role="listbox"] {
+  display: none;
+}

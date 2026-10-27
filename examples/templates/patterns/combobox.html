@@ -3,9 +3,10 @@
 {% block title %}Combobox — wtforms-htmx{% endblock %}
 
 {% block extra_head %}
+  <link rel="stylesheet" href="{{ url_for('js.static', filename='combobox.css') }}">
   <link rel="stylesheet" href="{{ url_for('static', filename='combobox.css') }}">
-  {# Optional keyboard navigation. The library does not ship it. #}
-  <script src="{{ url_for('static', filename='combobox-enhance.js') }}" defer></script>
+  {# Optional keyboard navigation, from the npm package. #}
+  <script src="{{ url_for('js.static', filename='combobox.js') }}" defer></script>
 {% endblock %}
 
 {% block content %}
