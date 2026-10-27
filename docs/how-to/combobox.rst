@@ -636,17 +636,25 @@ need JavaScript: see :ref:`pattern-combobox-keyboard`.
 Close the listbox on blur
 -------------------------
 
-This CSS rule hides the listbox when the focus leaves the combobox, with
-no JavaScript:
+This CSS rule hides the listbox when the focus leaves the combobox:
 
 .. code-block:: css
 
-    [data-combobox]:not(:focus-within) [role="listbox"] {
-      display: none;
+    @media (scripting: enabled) {
+      [data-combobox]:not(:focus-within) [role="listbox"] {
+        display: none;
+      }
     }
 
+The ``scripting`` media query limits the rule to browsers with
+JavaScript. Without JavaScript, a click on the search button reloads the
+page with the focus outside the combobox, and the rule would hide the
+new suggestions.
+
 A click on a suggestion still works: the button gets the focus during the
-click, so the listbox stays visible until the swap.
+click, so the listbox stays visible until the swap. With
+``combobox.js``, this rule is not needed: the script closes the listbox
+when the focus leaves the combobox.
 
 Without JavaScript
 ------------------
