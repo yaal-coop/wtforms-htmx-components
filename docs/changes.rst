@@ -1,8 +1,10 @@
 Changes
 =======
 
-Unreleased
-----------
+Version 0.2.0
+-------------
+
+Released 2026-10-27
 
 - ``ComboboxWidget`` renders its ``<div>`` with ``data-combobox``, and
   each chip's ``×`` has ``data-combobox-remove``. The example script and
