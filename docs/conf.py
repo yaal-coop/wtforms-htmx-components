@@ -68,8 +68,11 @@ templates_path = ["_templates"]
 exclude_patterns = ["_build"]
 
 html_theme = "flask"
+html_theme_options = {"index_sidebar_logo": False}
 html_static_path = ["_static"]
 html_css_files = ["color-scheme.css"]
+html_logo = "_static/logo.webp"
+html_favicon = "_static/favicon.svg"
 
 html_context = {
     "project_links": [

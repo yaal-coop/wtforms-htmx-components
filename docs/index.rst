@@ -1,6 +1,10 @@
 wtforms-htmx-components
 =======================
 
+.. image:: _static/logo.webp
+   :align: center
+   :alt: wtforms-htmx
+
 Ready-made interactive :external+wtforms:doc:`WTForms <index>` fields
 built on `wtforms-htmx <https://github.com/yaal-coop/wtforms-htmx>`_.
 

@@ -1,3 +1,10 @@
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs/_static/logo-dark.webp">
+    <img src="docs/_static/logo.webp" alt="wtforms-htmx">
+  </picture>
+</p>
+
 # wtforms-htmx-components
 
 Ready-made interactive [WTForms](https://wtforms.readthedocs.io/) fields
