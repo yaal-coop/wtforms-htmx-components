@@ -611,6 +611,38 @@ def test_query_gets_autofocus_after_a_pick():
     assert "autofocus" in str(form.country.query())
 
 
+def test_single_query_gets_autofocus_after_a_remove():
+    """After a click on the chip's ×, the single query input has autofocus."""
+    form = _SingleForm(
+        _formdata(
+            {
+                "country-value": "FR",
+                "country-query": "France",
+                "country-remove": "FR",
+            }
+        ),
+        obj=_State(country="FR"),
+    )
+    form.mutate()
+    assert "autofocus" in str(form.country.query())
+
+
+def test_multi_query_gets_autofocus_after_a_remove():
+    """After a click on a chip's ×, the multi query input has autofocus."""
+    form = _MultiForm(
+        _formdata(
+            {
+                "countries-query": "",
+                "countries-value": ["FR", "DE"],
+                "countries-remove": "FR",
+            }
+        ),
+        obj=_MultiState(countries=["FR", "DE"]),
+    )
+    form.mutate()
+    assert "autofocus" in str(form.countries.query())
+
+
 def test_query_has_no_autofocus_while_typing():
     """Without a pick, the query input has no autofocus."""
     form = _SingleForm(_formdata({"country-query": "ger", "country-value": ""}))

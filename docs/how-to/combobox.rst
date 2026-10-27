@@ -398,7 +398,8 @@ The multi field has the same shape, with these differences:
   :func:`~wtforms_htmx.mutations.value_add` and clears the query with
   :func:`~wtforms_htmx.mutations.value_set`;
 - ``remove`` removes one value with
-  :func:`~wtforms_htmx.mutations.value_remove`.
+  :func:`~wtforms_htmx.mutations.value_remove`. It also refreshes the
+  query input, so the input gets ``autofocus``.
 
 Build a single combobox by hand
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -489,8 +490,8 @@ Every interaction is a regular form submit:
 - a click on ``Save`` submits the form and validates it.
 
 Each submit returns the whole page. With htmx, only the field is
-swapped. After a pick, the query input gets ``autofocus``, so the focus
-comes back to it when the page loads.
+swapped. After a pick or a click on a chip's ``×``, the query input gets
+``autofocus``, so the focus comes back to it when the page loads.
 
 .. _pattern-combobox-keyboard:
 

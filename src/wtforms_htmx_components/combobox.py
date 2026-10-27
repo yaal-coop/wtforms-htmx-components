@@ -44,13 +44,17 @@ class QueryInputWidget:
     """Render the search ``<input>`` with the ARIA combobox attributes.
 
     ``aria-expanded`` is true when the listbox has choices. After a
-    click on a suggestion, the input gets ``autofocus``, so a no-JS page
-    reload puts the focus back on it.
+    click on a suggestion or on a chip's remove button, the input gets
+    ``autofocus``, so a no-JS page reload puts the focus back on it.
     """
 
     def __call__(self, field: Any, **kwargs: Any) -> Markup:
         listbox = field._form.suggestions
-        autofocus = kwargs.pop("autofocus", False) or bool(listbox.raw_data)
+        autofocus = (
+            kwargs.pop("autofocus", False)
+            or bool(listbox.raw_data)
+            or bool(field._form.remove.raw_data)
+        )
         attrs: dict[str, Any] = {
             "type": "text",
             "name": field.name,
@@ -699,7 +703,7 @@ def _build_multi_inner_form(
             .triggers("query", value_set(""))
             .triggers("suggestions")
         ),
-        "remove": ButtonField("×").triggers("value", value_remove),
+        "remove": ButtonField("×").triggers("value", value_remove).triggers("query"),
     }
     if search_label is not None:
         attrs["search"] = ButtonField(search_label).triggers("suggestions")

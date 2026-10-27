@@ -50,6 +50,7 @@ def test_multi_chip_remove_nojs(page_nojs, nav_nojs):
     _submit(page_nojs, '#countries-value button[name="countries-remove"][value="FR"]')
     chip = page_nojs.locator("#countries-value .chip", has_text="France")
     expect(chip).to_have_count(0)
+    expect(page_nojs.locator("#countries-query")).to_have_attribute("autofocus", "")
 
 
 def test_multi_pick_renders_autofocus_on_query_nojs(page_nojs, nav_nojs):

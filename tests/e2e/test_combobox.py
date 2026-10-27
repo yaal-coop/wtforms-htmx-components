@@ -60,6 +60,7 @@ def test_combobox_single_remove_chip_clears_value(page, nav):
     chip.locator(".chip-remove").click()
     expect(page.locator("#country-value .chip")).to_have_count(0)
     expect(page.locator("input#country-query")).to_be_visible()
+    expect(page.locator("input#country-query")).to_be_focused()
 
 
 def test_combobox_multi_add_chip(page, nav):
@@ -111,6 +112,7 @@ def test_combobox_multi_remove_chip(page, nav):
 
     chip.locator(".chip-remove").click()
     expect(page.locator('#countries-value .chip[data-value="DE"]')).to_have_count(0)
+    expect(page.locator("input#countries-query")).to_be_focused()
 
 
 def test_combobox_multi_focus_returns_to_query_after_pick(page, nav):
@@ -136,6 +138,7 @@ def test_combobox_backspace_removes_last_chip(page, nav):
     expect(page.locator("#countries-value .chip", has_text="Germany")).to_be_visible()
     query.press("Backspace")
     expect(page.locator('#countries-value .chip[data-value="DE"]')).to_have_count(0)
+    expect(query).to_be_focused()
 
 
 def test_combobox_single_free_synthetic_option_appears(page, nav):
