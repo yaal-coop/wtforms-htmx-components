@@ -110,8 +110,7 @@
     }
   });
 
-  // Typing reopens the listbox. Not on focusin: in Firefox, the Escape
-  // handler's refocus would clear the flag it sets.
+  // Typing reopens the listbox. So does a click on the input.
   function clearClosedState(e) {
     const wrap = e.target.closest?.(".combobox-wrap");
     if (wrap && wrap.dataset.comboboxClosed) {
@@ -119,6 +118,19 @@
     }
   }
   document.addEventListener("input", clearClosedState);
+  document.addEventListener("click", function (e) {
+    if (e.target.matches?.('[role="combobox"]')) clearClosedState(e);
+  });
+
+  // Focus that comes from outside the combobox reopens the listbox. Focus
+  // that moves inside it does not: in Firefox, the Escape handler's
+  // refocus would clear the flag it sets.
+  document.addEventListener("focusin", function (e) {
+    const wrap = e.target.closest?.(".combobox-wrap");
+    if (!wrap) return;
+    if (e.relatedTarget?.closest?.(".combobox-wrap") === wrap) return;
+    clearClosedState(e);
+  });
 
   // Moving the focus out of the combobox closes the listbox.
   document.addEventListener("focusout", function (e) {

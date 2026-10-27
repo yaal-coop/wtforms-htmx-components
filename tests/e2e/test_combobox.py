@@ -328,8 +328,8 @@ def test_combobox_mouseover_does_not_steal_focus_from_input(page, nav):
     expect(query).to_be_focused()
 
 
-def test_combobox_click_back_into_input_after_escape_keeps_listbox_closed(page, nav):
-    """Refocusing the input after Esc does not reopen the listbox."""
+def test_combobox_click_back_into_input_after_escape_reopens_listbox(page, nav):
+    """Clicking back into the input after Esc and a click outside reopens the listbox."""
     _goto(page, nav)
     query = page.locator("input#countries-query")
     query.fill("fr")
@@ -342,7 +342,52 @@ def test_combobox_click_back_into_input_after_escape_keeps_listbox_closed(page, 
     page.locator("h1").click()
     query.click()
     expect(query).to_be_focused()
+    expect(listbox).to_be_visible()
+
+
+def test_combobox_click_on_focused_input_after_escape_reopens_listbox(page, nav):
+    """Clicking the input that kept the focus after Esc reopens the listbox."""
+    _goto(page, nav)
+    query = page.locator("input#countries-query")
+    query.fill("fr")
+    listbox = page.locator("ul#countries-suggestions")
+    expect(listbox.locator("li[role='option']").first).to_be_visible()
+
+    query.press("Escape")
     expect(listbox).not_to_be_visible()
+
+    query.click()
+    expect(listbox).to_be_visible()
+
+
+def test_combobox_suggest_on_focus_reopens_on_click_after_focusout(page, nav):
+    """With suggestions on focus, clicking back into the input shows them again."""
+    _goto(page, nav)
+    query = page.locator("input#continents-query")
+    listbox = page.locator("ul#continents-suggestions")
+    query.click()
+    expect(listbox.locator("li[role='option']").first).to_be_visible()
+
+    page.locator("h1").click()
+    expect(listbox).not_to_be_visible()
+
+    query.click()
+    expect(listbox.locator("li[role='option']").first).to_be_visible()
+
+
+def test_combobox_suggest_on_focus_reopens_on_keyboard_focus(page, nav):
+    """With suggestions on focus, focus coming back without a click shows them again."""
+    _goto(page, nav)
+    query = page.locator("input#continents-query")
+    listbox = page.locator("ul#continents-suggestions")
+    query.click()
+    expect(listbox.locator("li[role='option']").first).to_be_visible()
+
+    page.locator("h1").click()
+    expect(listbox).not_to_be_visible()
+
+    query.focus()
+    expect(listbox.locator("li[role='option']").first).to_be_visible()
 
 
 def test_combobox_click_outside_closes_listbox(page, nav):

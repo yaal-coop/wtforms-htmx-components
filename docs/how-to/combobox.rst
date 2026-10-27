@@ -535,6 +535,9 @@ a CSS rule so that this attribute hides the listbox, even while
       display: none;
     }
 
+The script removes the attribute when the user types, clicks the input,
+or moves the focus back into the combobox from outside.
+
 The keys:
 
 ================================ =============================================
@@ -546,7 +549,8 @@ Key                              Action
 :kbd:`Home` on a suggestion      Focus the first suggestion
 :kbd:`End` on a suggestion       Focus the last suggestion
 :kbd:`Esc` anywhere in wrapper   Close the listbox and focus the input.
-                                 Typing opens it again.
+                                 Typing or a click on the input opens it
+                                 again.
 :kbd:`Enter` in search input     Pick the first suggestion, if any. Otherwise,
                                  do nothing, so the form's first button (for
                                  example a chip's ``×``) is not clicked.

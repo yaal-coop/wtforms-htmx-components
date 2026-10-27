@@ -6,6 +6,9 @@ Unreleased
 
 - After a click on a chip's ``×``, the focus goes back to the query
   input.
+- In the example script, a closed listbox opens again on a click on the
+  query input, or when the focus comes back to the combobox. Before, it
+  stayed hidden until the user typed.
 
 Version 0.1.1
 -------------
