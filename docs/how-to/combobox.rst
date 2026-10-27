@@ -613,51 +613,9 @@ The multi field has the same shape, with these differences:
   :func:`~wtforms_htmx.mutations.value_remove`. It also refreshes the
   query input, so the input gets ``autofocus``.
 
-Build a single combobox by hand
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-For a state the fields do not support, build the combobox from plain
-fields:
-
-.. code-block:: python
-
-    from wtforms import (
-        ButtonField, HiddenField, SelectChoice, SelectField, StringField,
-        SubmitField,
-    )
-    from wtforms.widgets import Button
-    from wtforms_htmx import HtmxForm
-
-    def suggest(form, _field):
-        q = (form.query.data or "").lower()
-        if not q:
-            return []
-
-        return [
-            SelectChoice(c, n) for c, n in NAME_BY_CODE.items() if q in n.lower()
-        ][:10]
-
-    def pick_value(form, source, target):
-        target.data = source.raw_data[0]
-
-    def pick_label(form, source, target):
-        target.data = NAME_BY_CODE.get(source.raw_data[0], "")
-
-    class CountryForm(HtmxForm):
-        query = StringField("Country").triggers("suggestions")
-        search = ButtonField("Search").triggers("suggestions")
-        suggestions = (SelectField(
-            choices=suggest, option_widget=Button(), validate_choice=False,
-        )
-            .triggers("country", pick_value)
-            .triggers("query", pick_label)
-            .triggers("suggestions"))
-        country = HiddenField()
-        save = SubmitField("Save")
-
-:class:`~wtforms_htmx_components.ComboboxSingleField` builds about the
-same form. It adds the chip, the ``remove`` button, and the label of the
-stored value in the query input on the first render.
+To build a combobox from plain fields, see
+:external+wtforms-htmx:doc:`examples/combobox` in the wtforms-htmx
+documentation.
 
 ARIA semantics
 --------------
