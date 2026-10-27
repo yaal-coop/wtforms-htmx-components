@@ -1,8 +1,10 @@
 Changes
 =======
 
-Unreleased
-----------
+Version 0.1.2
+-------------
+
+Released 2026-10-27
 
 - After a click on a chip's ``×``, the focus goes back to the query
   input.
