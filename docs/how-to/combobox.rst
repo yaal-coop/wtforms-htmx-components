@@ -36,6 +36,58 @@ listbox with flags and chips styled for the example app.
 Single, strict
 ~~~~~~~~~~~~~~
 
+.. screencast:: |examples|/patterns/combobox
+   :locator: .combobox-cell:has(#country-query) .combobox
+   :locator-padding: 5 10 160 10
+   :viewport-height: 1600
+   :autoplay:
+   :muted:
+   :loop:
+   :trim-start:
+   :poster:
+   :alias: combobox-single
+   :interactions:
+     const QUERY = '#country-query';
+     const wait = (ms) => new Promise(r => setTimeout(r, ms));
+     const press = (key) => document.activeElement.dispatchEvent(
+       new KeyboardEvent('keydown', {key, bubbles: true}));
+     // htmx swaps the query input: look it up again before each use.
+     const type = async (text) => {
+       const query = document.querySelector(QUERY);
+       query.focus();
+       for (const c of text) {
+         query.value += c;
+         query.dispatchEvent(new Event('input', {bubbles: true}));
+         await wait(120);
+       }
+       await wait(900);
+     };
+     const pick = async (downs) => {
+       for (let i = 0; i < downs; i++) {
+         press('ArrowDown');
+         await wait(500);
+       }
+       await wait(300);
+       document.activeElement.click();
+       await wait(1200);
+     };
+     const remove = async (value) => {
+       document.querySelector(
+         `#country-value [data-value="${value}"] [data-combobox-remove]`).click();
+       await wait(1200);
+     };
+     // Hide the other comboboxes that show under the listbox.
+     for (const cell of document.querySelectorAll('.combobox-cell')) {
+       if (!cell.querySelector(QUERY)) cell.style.visibility = 'hidden';
+     }
+     await wait(800);
+     await remove('CU');
+     await type('pal');
+     await pick(3);
+     document.activeElement.blur();
+     await wait(500);
+
+
 .. code-block:: python
 
     from wtforms import SelectChoice, SubmitField
@@ -63,6 +115,57 @@ field, and ``field.data`` is the picked value. Their errors show in
 Single, allow custom values
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+.. screencast:: |examples|/patterns/combobox
+   :locator: .combobox-cell:has(#country_free-query) .combobox
+   :locator-padding: 5 10 60 10
+   :viewport-height: 1600
+   :autoplay:
+   :muted:
+   :loop:
+   :trim-start:
+   :poster:
+   :alias: combobox-single-custom
+   :interactions:
+     const QUERY = '#country_free-query';
+     const wait = (ms) => new Promise(r => setTimeout(r, ms));
+     const press = (key) => document.activeElement.dispatchEvent(
+       new KeyboardEvent('keydown', {key, bubbles: true}));
+     // htmx swaps the query input: look it up again before each use.
+     const type = async (text) => {
+       const query = document.querySelector(QUERY);
+       query.focus();
+       for (const c of text) {
+         query.value += c;
+         query.dispatchEvent(new Event('input', {bubbles: true}));
+         await wait(120);
+       }
+       await wait(900);
+     };
+     const pick = async (downs) => {
+       for (let i = 0; i < downs; i++) {
+         press('ArrowDown');
+         await wait(500);
+       }
+       await wait(300);
+       document.activeElement.click();
+       await wait(1200);
+     };
+     const remove = async (value) => {
+       document.querySelector(
+         `#country_free-value [data-value="${value}"] [data-combobox-remove]`).click();
+       await wait(1200);
+     };
+     // Hide the other comboboxes that show under the listbox.
+     for (const cell of document.querySelectorAll('.combobox-cell')) {
+       if (!cell.querySelector(QUERY)) cell.style.visibility = 'hidden';
+     }
+     await wait(800);
+     await type('Atlantis');
+     await pick(1);
+     document.activeElement.blur();
+     await wait(500);
+
+
 .. code-block:: python
 
     country = ComboboxSingleField(
@@ -79,6 +182,58 @@ option. A click on it stores the query itself. See
 
 Multi, strict
 ~~~~~~~~~~~~~
+
+.. screencast:: |examples|/patterns/combobox
+   :locator: .combobox-cell:has(#countries-query) .combobox-search
+   :locator-padding: 5 10 60 10
+   :viewport-height: 1600
+   :autoplay:
+   :muted:
+   :loop:
+   :trim-start:
+   :poster:
+   :alias: combobox-multi
+   :interactions:
+     const QUERY = '#countries-query';
+     const wait = (ms) => new Promise(r => setTimeout(r, ms));
+     const press = (key) => document.activeElement.dispatchEvent(
+       new KeyboardEvent('keydown', {key, bubbles: true}));
+     // htmx swaps the query input: look it up again before each use.
+     const type = async (text) => {
+       const query = document.querySelector(QUERY);
+       query.focus();
+       for (const c of text) {
+         query.value += c;
+         query.dispatchEvent(new Event('input', {bubbles: true}));
+         await wait(120);
+       }
+       await wait(900);
+     };
+     const pick = async (downs) => {
+       for (let i = 0; i < downs; i++) {
+         press('ArrowDown');
+         await wait(500);
+       }
+       await wait(300);
+       document.activeElement.click();
+       await wait(1200);
+     };
+     const remove = async (value) => {
+       document.querySelector(
+         `#countries-value [data-value="${value}"] [data-combobox-remove]`).click();
+       await wait(1200);
+     };
+     // Hide the other comboboxes that show under the listbox.
+     for (const cell of document.querySelectorAll('.combobox-cell')) {
+       if (!cell.querySelector(QUERY)) cell.style.visibility = 'hidden';
+     }
+     await wait(800);
+     await type('ukr');
+     await pick(1);
+     await remove('CU');
+     document.activeElement.blur();
+     await wait(500);
+
 
 .. code-block:: python
 
@@ -98,6 +253,59 @@ and clears the query. A click on a chip's ``×`` removes it.
 
 Multi, allow custom values
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. screencast:: |examples|/patterns/combobox
+   :locator: .combobox-cell:has(#countries_free-query) .combobox-search
+   :locator-padding: 5 10 95 10
+   :viewport-height: 1600
+   :autoplay:
+   :muted:
+   :loop:
+   :trim-start:
+   :poster:
+   :alias: combobox-multi-custom
+   :interactions:
+     const QUERY = '#countries_free-query';
+     const wait = (ms) => new Promise(r => setTimeout(r, ms));
+     const press = (key) => document.activeElement.dispatchEvent(
+       new KeyboardEvent('keydown', {key, bubbles: true}));
+     // htmx swaps the query input: look it up again before each use.
+     const type = async (text) => {
+       const query = document.querySelector(QUERY);
+       query.focus();
+       for (const c of text) {
+         query.value += c;
+         query.dispatchEvent(new Event('input', {bubbles: true}));
+         await wait(120);
+       }
+       await wait(900);
+     };
+     const pick = async (downs) => {
+       for (let i = 0; i < downs; i++) {
+         press('ArrowDown');
+         await wait(500);
+       }
+       await wait(300);
+       document.activeElement.click();
+       await wait(1200);
+     };
+     const remove = async (value) => {
+       document.querySelector(
+         `#countries_free-value [data-value="${value}"] [data-combobox-remove]`).click();
+       await wait(1200);
+     };
+     // Hide the other comboboxes that show under the listbox.
+     for (const cell of document.querySelectorAll('.combobox-cell')) {
+       if (!cell.querySelector(QUERY)) cell.style.visibility = 'hidden';
+     }
+     await wait(800);
+     await type('Atlantis');
+     await pick(1);
+     await type('cub');
+     await pick(1);
+     document.activeElement.blur();
+     await wait(500);
+
 
 .. code-block:: python
 
