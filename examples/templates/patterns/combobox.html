@@ -23,7 +23,7 @@
     <div class="combobox-grid">
       <section class="combobox-cell">
         <h2>Single, strict</h2>
-        <div class="combobox-wrap">
+        <div data-combobox>
           {{ form.country.label }}
           <div class="combobox">
             <div role="group" class="combobox-search">
@@ -38,7 +38,7 @@
 
       <section class="combobox-cell">
         <h2>Single, allow custom</h2>
-        <div class="combobox-wrap">
+        <div data-combobox>
           {{ form.country_free.label }}
           <div class="combobox">
             <div role="group" class="combobox-search">
@@ -53,7 +53,7 @@
 
       <section class="demo-area combobox-cell">
         <h2>Multi, strict</h2>
-        <div class="combobox-wrap">
+        <div data-combobox>
           {{ form.countries.label }}
           <div role="group" class="combobox-search">
             <div class="combobox multi-combobox multi-combobox-inline">
@@ -68,7 +68,7 @@
 
       <section class="combobox-cell">
         <h2>Multi, allow custom</h2>
-        <div class="combobox-wrap">
+        <div data-combobox>
           {{ form.countries_free.label }}
           <div role="group" class="combobox-search">
             <div class="combobox multi-combobox multi-combobox-inline">
@@ -83,7 +83,7 @@
 
       <section class="combobox-cell">
         <h2>Multi, suggested on focus</h2>
-        <div class="combobox-wrap">
+        <div data-combobox>
           {{ form.continents.label }}
           <div role="group" class="combobox-search">
             <div class="combobox multi-combobox multi-combobox-inline">

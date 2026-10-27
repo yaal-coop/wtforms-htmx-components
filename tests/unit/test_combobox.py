@@ -536,6 +536,31 @@ def test_multi_remove_via_value_remove():
     assert form.countries.value.data == ["DE"]
 
 
+def test_widget_marks_the_wrapper_with_data_combobox():
+    """The wrapper div has data-combobox, in edit and read-only modes."""
+
+    class F(HtmxForm):
+        class Meta:
+            csrf = False
+
+        country = ComboboxSingleField(
+            "Country", suggest=_suggest, label_for=_label, validators=[ReadOnly()]
+        )
+
+    assert str(_SingleForm(obj=_State(country="FR")).country()).startswith(
+        "<div data-combobox>"
+    )
+    assert str(F(obj=_State(country="FR")).country()).startswith("<div data-combobox>")
+
+
+def test_remove_buttons_have_data_combobox_remove():
+    """The single and multi chips' × buttons have data-combobox-remove."""
+    single = str(_SingleForm(obj=_State(country="FR")).country.value())
+    multi = str(_MultiForm(obj=_MultiState(countries=["FR", "DE"])).countries.value())
+    assert single.count("data-combobox-remove") == 1
+    assert multi.count("data-combobox-remove") == 2
+
+
 def test_widget_renders_div_wrapper_with_inner_fields():
     """The field renders its inner fields in a div."""
     form = _SingleForm(obj=_State(country="FR"))

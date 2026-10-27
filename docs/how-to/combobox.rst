@@ -137,12 +137,14 @@ Render the field
 ----------------
 
 ``{{ form.country() }}`` renders the chips, the query input, the search
-button and the listbox, in this order. To lay them out another way,
-render each part on its own, as the example app does:
+button and the listbox, in this order, in a ``<div data-combobox>``. To
+lay them out another way, render each part on its own, as the example
+app does. Put ``data-combobox`` on the element that holds the parts: the
+CSS rules and the script below use it.
 
 .. code-block:: jinja
 
-    <div class="combobox-wrap">
+    <div data-combobox>
       {{ form.country.label }}
       {{ form.country.query() }}
       {{ form.country.search() }}
@@ -466,12 +468,12 @@ need JavaScript: see :ref:`pattern-combobox-keyboard`.
 Close the listbox on blur
 -------------------------
 
-This CSS rule hides the listbox when the focus leaves the wrapper, with no
-JavaScript:
+This CSS rule hides the listbox when the focus leaves the combobox, with
+no JavaScript:
 
 .. code-block:: css
 
-    .combobox-wrap:not(:focus-within) [role="listbox"] {
+    [data-combobox]:not(:focus-within) [role="listbox"] {
       display: none;
     }
 
@@ -505,11 +507,16 @@ The library ships no JavaScript. The example app's
 first suggestion. To use it, copy it to the application's static
 directory and load it on the combobox page.
 
-The script finds its elements with these selectors: ``.combobox-wrap``
-around the field, ``[role="combobox"]`` for the query input,
-``[role="option"] > button`` for the suggestions, ``.chip`` and
-``.chip-remove`` for the chips. With custom widgets or another layout,
-adapt them in the copy.
+The script relies on the markup of the library only:
+
+- ``data-combobox`` on the element that holds the parts of the field;
+- ``role="combobox"`` on the query input;
+- ``role="option"`` around each suggestion button;
+- ``data-combobox-remove`` on each chip's ``×``.
+
+The library sets all of them, except ``data-combobox`` when the parts
+are rendered one by one. Custom widgets keep ``data-combobox-remove`` as
+long as they render the button with the ``remove`` field.
 
 It is plain JavaScript. Its handlers sit on the document, so they keep
 working after each htmx swap:
@@ -524,14 +531,14 @@ Load it with a ``defer`` script tag:
 
     <script src="{{ url_for('static', filename='combobox-enhance.js') }}" defer></script>
 
-:kbd:`Esc` sets a ``data-combobox-closed`` attribute on the wrapper. Add
-a CSS rule so that this attribute hides the listbox, even while
-``:focus-within`` matches:
+:kbd:`Esc` sets a ``data-combobox-closed`` attribute on the
+``data-combobox`` element. Add a CSS rule so that this attribute hides
+the listbox, even while ``:focus-within`` matches:
 
 .. code-block:: css
 
-    .combobox-wrap:not(:focus-within) [role="listbox"],
-    .combobox-wrap[data-combobox-closed="true"] [role="listbox"] {
+    [data-combobox]:not(:focus-within) [role="listbox"],
+    [data-combobox][data-combobox-closed="true"] [role="listbox"] {
       display: none;
     }
 
@@ -548,7 +555,7 @@ Key                              Action
 :kbd:`↑` on a suggestion         Focus the previous one, or the search input
 :kbd:`Home` on a suggestion      Focus the first suggestion
 :kbd:`End` on a suggestion       Focus the last suggestion
-:kbd:`Esc` anywhere in wrapper   Close the listbox and focus the input.
+:kbd:`Esc` in the combobox       Close the listbox and focus the input.
                                  Typing or a click on the input opens it
                                  again.
 :kbd:`Enter` in search input     Pick the first suggestion, if any. Otherwise,

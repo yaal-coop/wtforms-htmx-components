@@ -1,8 +1,11 @@
 /* Keyboard navigation for the combobox, per the ARIA 1.2 combobox pattern.
- * Handlers sit on the document, so they keep working after htmx swaps. */
+ * Handlers sit on the document, so they keep working after htmx swaps.
+ * [data-combobox] marks the element that holds the parts of a combobox. */
 (function () {
-  function optionButtons(wrap) {
-    return Array.from(wrap.querySelectorAll('[role="option"] > button'));
+  const ROOT = "[data-combobox]";
+
+  function optionButtons(root) {
+    return Array.from(root.querySelectorAll('[role="option"] > button'));
   }
 
   document.addEventListener("keydown", function (e) {
@@ -14,13 +17,13 @@
       target.matches?.('[role="combobox"]') &&
       (e.key === "ArrowDown" || e.key === "ArrowUp")
     ) {
-      const wrap = target.closest(".combobox-wrap");
-      if (!wrap) return;
-      delete wrap.dataset.comboboxClosed;
-      const buttons = optionButtons(wrap);
+      const root = target.closest(ROOT);
+      if (!root) return;
+      delete root.dataset.comboboxClosed;
+      const buttons = optionButtons(root);
       if (!buttons.length) return;
       e.preventDefault();
-      const hovered = wrap.querySelector('[role="option"] > button:hover');
+      const hovered = root.querySelector('[role="option"] > button:hover');
       const len = buttons.length;
       let nextIdx;
       if (e.key === "ArrowDown") {
@@ -36,9 +39,9 @@
 
     // Arrow keys / Home / End on an option button
     if (target.matches?.('[role="option"] > button')) {
-      const wrap = target.closest(".combobox-wrap");
-      if (!wrap) return;
-      const buttons = optionButtons(wrap);
+      const root = target.closest(ROOT);
+      if (!root) return;
+      const buttons = optionButtons(root);
       const idx = buttons.indexOf(target);
 
       if (e.key === "ArrowDown") {
@@ -51,7 +54,7 @@
         e.preventDefault();
         // From the first option, go back to the input.
         if (idx === 0) {
-          wrap.querySelector('[role="combobox"]')?.focus();
+          root.querySelector('[role="combobox"]')?.focus();
         } else {
           buttons[idx - 1].focus();
         }
@@ -77,22 +80,22 @@
       target.matches?.('[role="combobox"]') &&
       target.value === ""
     ) {
-      const wrap = target.closest(".combobox-wrap");
-      if (!wrap) return;
-      const chips = wrap.querySelectorAll(".chip");
-      if (!chips.length) return;
+      const root = target.closest(ROOT);
+      if (!root) return;
+      const removes = root.querySelectorAll("[data-combobox-remove]");
+      if (!removes.length) return;
       e.preventDefault();
-      chips[chips.length - 1].querySelector(".chip-remove")?.click();
+      removes[removes.length - 1].click();
       return;
     }
 
     // Enter in the input picks the first option. Otherwise the browser
     // would click the first button of the form, which can be a chip's ×.
     if (e.key === "Enter" && target.matches?.('[role="combobox"]')) {
-      const wrap = target.closest(".combobox-wrap");
-      if (!wrap) return;
+      const root = target.closest(ROOT);
+      if (!root) return;
       e.preventDefault();
-      const buttons = optionButtons(wrap);
+      const buttons = optionButtons(root);
       if (buttons.length) {
         buttons[0].click();
       }
@@ -101,20 +104,20 @@
 
     // Escape closes the listbox and keeps the focus on the input.
     // data-combobox-closed lets CSS hide the listbox despite :focus-within.
-    if (e.key === "Escape" && target.closest?.(".combobox-wrap")) {
-      const wrap = target.closest(".combobox-wrap");
+    if (e.key === "Escape" && target.closest?.(ROOT)) {
+      const root = target.closest(ROOT);
       e.preventDefault();
       // Focus before setting the flag, so the focus events cannot clear it.
-      wrap.querySelector('[role="combobox"]')?.focus();
-      wrap.dataset.comboboxClosed = "true";
+      root.querySelector('[role="combobox"]')?.focus();
+      root.dataset.comboboxClosed = "true";
     }
   });
 
   // Typing reopens the listbox. So does a click on the input.
   function clearClosedState(e) {
-    const wrap = e.target.closest?.(".combobox-wrap");
-    if (wrap && wrap.dataset.comboboxClosed) {
-      delete wrap.dataset.comboboxClosed;
+    const root = e.target.closest?.(ROOT);
+    if (root && root.dataset.comboboxClosed) {
+      delete root.dataset.comboboxClosed;
     }
   }
   document.addEventListener("input", clearClosedState);
@@ -126,18 +129,18 @@
   // that moves inside it does not: in Firefox, the Escape handler's
   // refocus would clear the flag it sets.
   document.addEventListener("focusin", function (e) {
-    const wrap = e.target.closest?.(".combobox-wrap");
-    if (!wrap) return;
-    if (e.relatedTarget?.closest?.(".combobox-wrap") === wrap) return;
+    const root = e.target.closest?.(ROOT);
+    if (!root) return;
+    if (e.relatedTarget?.closest?.(ROOT) === root) return;
     clearClosedState(e);
   });
 
   // Moving the focus out of the combobox closes the listbox.
   document.addEventListener("focusout", function (e) {
-    const wrap = e.target.closest?.(".combobox-wrap");
-    if (!wrap) return;
-    if (e.relatedTarget?.closest?.(".combobox-wrap") === wrap) return;
-    wrap.dataset.comboboxClosed = "true";
+    const root = e.target.closest?.(ROOT);
+    if (!root) return;
+    if (e.relatedTarget?.closest?.(ROOT) === root) return;
+    root.dataset.comboboxClosed = "true";
   });
 
   // When an option has the focus, hovering another option moves the focus
@@ -145,7 +148,7 @@
   document.addEventListener("mouseover", function (e) {
     const btn = e.target.closest?.('[role="option"] > button');
     if (!btn) return;
-    if (!btn.closest(".combobox-wrap")) return;
+    if (!btn.closest(ROOT)) return;
     const active = document.activeElement;
     if (!active?.matches?.('[role="option"] > button')) return;
     if (active === btn) return;
@@ -154,14 +157,14 @@
 
   // Browsers ignore autofocus on swapped content: apply it after a pick.
   if (!window.htmx) return;
-  htmx.onLoad(function (root) {
-    const inputs = root.matches?.('[role="combobox"][autofocus]')
-      ? [root]
-      : Array.from(root.querySelectorAll?.('[role="combobox"][autofocus]') || []);
+  htmx.onLoad(function (elt) {
+    const inputs = elt.matches?.('[role="combobox"][autofocus]')
+      ? [elt]
+      : Array.from(elt.querySelectorAll?.('[role="combobox"][autofocus]') || []);
     if (inputs.length === 0) return;
-    const wrap = inputs[0].closest(".combobox-wrap");
-    if (wrap && wrap.dataset.comboboxClosed) {
-      delete wrap.dataset.comboboxClosed;
+    const root = inputs[0].closest(ROOT);
+    if (root && root.dataset.comboboxClosed) {
+      delete root.dataset.comboboxClosed;
     }
     inputs[0].focus();
   });

@@ -71,13 +71,13 @@ ul[role="listbox"]:not(:focus-within) [role="option"]:hover {
 
 /* The combobox wrapper sits in normal document flow; reserve breathing
    room before the next form control (typically ``Save``). */
-.combobox-wrap {
+[data-combobox] {
   margin-bottom: 1.5rem;
 }
 
 /* Animate the close only: an opening animation would replay on every swap.
    allow-discrete lets display: none take part in the transition. */
-.combobox-wrap [role="listbox"] {
+[data-combobox] [role="listbox"] {
   opacity: 1;
   transform: translateY(0);
   transition:
@@ -86,7 +86,7 @@ ul[role="listbox"]:not(:focus-within) [role="option"]:hover {
     display 120ms allow-discrete;
 }
 
-.combobox-wrap[data-combobox-closed="true"] [role="listbox"] {
+[data-combobox][data-combobox-closed="true"] [role="listbox"] {
   display: none;
   opacity: 0;
   transform: translateY(-4px);

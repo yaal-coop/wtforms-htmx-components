@@ -1,6 +1,15 @@
 Changes
 =======
 
+Unreleased
+----------
+
+- ``ComboboxWidget`` renders its ``<div>`` with ``data-combobox``, and
+  each chip's ``×`` has ``data-combobox-remove``. The example script and
+  CSS use these attributes instead of the CSS classes of the example
+  app. A template that renders the parts one by one must put
+  ``data-combobox`` on the element that holds them.
+
 Version 0.1.2
 -------------
 

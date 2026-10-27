@@ -221,7 +221,7 @@ class SingleChipWidget(_ChipRenderer):
 
 
 class ComboboxWidget:
-    """Render the parts of a combobox in a ``<div>``.
+    """Render the parts of a combobox in a ``<div data-combobox>``.
 
     The order is: the stored values, the query input, the search button
     and the listbox. The chips of a multi combobox show before the query
@@ -230,12 +230,14 @@ class ComboboxWidget:
     """
 
     def __call__(self, field: Any, **kwargs: Any) -> Markup:
+        attrs: dict[str, Any] = {"data-combobox": True}
+        attrs.update(kwargs)
         if field.flags.readonly or field.flags.disabled:
-            return Markup(f"<div {html_params(**kwargs)}>{field.value()}</div>")
+            return Markup(f"<div {html_params(**attrs)}>{field.value()}</div>")
 
         search = field.search() if "search" in field.form else ""
         return Markup(
-            f"<div {html_params(**kwargs)}>"
+            f"<div {html_params(**attrs)}>"
             f"{field.value()}"
             f"{field.query()}"
             f"{search}"
@@ -555,7 +557,7 @@ def _build_single_inner_form(
         ),
         "value": HiddenField(widget=value_widget, render_kw=value_render_kw),
         "remove": (
-            ButtonField("×")
+            ButtonField("×", render_kw={"data-combobox-remove": True})
             .triggers("value", value_set(""))
             .triggers("query", value_set(""))
             .triggers("suggestions")
@@ -703,7 +705,11 @@ def _build_multi_inner_form(
             .triggers("query", value_set(""))
             .triggers("suggestions")
         ),
-        "remove": ButtonField("×").triggers("value", value_remove).triggers("query"),
+        "remove": (
+            ButtonField("×", render_kw={"data-combobox-remove": True})
+            .triggers("value", value_remove)
+            .triggers("query")
+        ),
     }
     if search_label is not None:
         attrs["search"] = ButtonField(search_label).triggers("suggestions")
