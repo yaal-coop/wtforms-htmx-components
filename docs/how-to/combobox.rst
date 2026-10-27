@@ -589,8 +589,4 @@ Key                              Action
 Read the source
 ~~~~~~~~~~~~~~~
 
-``combobox.js`` is plain JavaScript, with no dependency:
-
-.. literalinclude:: ../../js/combobox.js
-   :language: javascript
-   :linenos:
+:doc:`../combobox-js` shows the code of both files.

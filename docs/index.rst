@@ -55,6 +55,7 @@ Start here
 - :doc:`how-to/combobox`: single and multi value combobox, with
   optional free-form input.
 - :doc:`api`: reference for the fields, widgets and validators.
+- :doc:`combobox-js`: source of the optional combobox script and CSS.
 
 .. toctree::
     :caption: How-to guides
@@ -69,6 +70,7 @@ Start here
     :hidden:
 
     api
+    combobox-js
 
 .. toctree::
     :caption: Changelog
