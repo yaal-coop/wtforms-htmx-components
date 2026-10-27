@@ -90,7 +90,9 @@ jobs:
           registry-url: https://registry.npmjs.org
           package-manager-cache: false
       - name: Set the version from the tag
-        run: npm version "$GITHUB_REF_NAME" --no-git-tag-version
+        run: |
+          npm version "$GITHUB_REF_NAME" --no-git-tag-version
+          sed -i "s/<VERSION>/$GITHUB_REF_NAME/g" README.md
         working-directory: js
       - name: Publish to npm
         run: npm publish --access public

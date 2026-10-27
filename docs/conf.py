@@ -27,8 +27,13 @@ extensions = [
     "sphinx_issues",
     "pallets_sphinx_themes",
     "sphinxcontrib.screenshot",
+    "sphinx_substitution_extensions",
     "_mdn_attr_role",
 ]
+
+rst_prolog = f"""
+.. |release| replace:: {release}
+"""
 
 screenshot_apps = {"examples": "_app:create_app"}
 screenshot_default_locator_padding = 10

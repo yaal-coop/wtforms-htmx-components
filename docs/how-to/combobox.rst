@@ -689,8 +689,13 @@ directory of the application:
     $ cp node_modules/wtforms-htmx-components/combobox.{js,css} static/
 
 Use the same version as the Python package: the script relies on the
-markup that this version renders. jsDelivr also serves the files, at
-``https://cdn.jsdelivr.net/npm/wtforms-htmx-components@<VERSION>/combobox.js``.
+markup that this version renders. jsDelivr also serves the files:
+
+.. code-block:: html
+   :substitutions:
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/wtforms-htmx-components@|release|/combobox.css">
+    <script src="https://cdn.jsdelivr.net/npm/wtforms-htmx-components@|release|/combobox.js" defer></script>
 
 Load the files
 ~~~~~~~~~~~~~~
