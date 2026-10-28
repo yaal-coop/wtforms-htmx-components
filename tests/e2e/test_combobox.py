@@ -125,6 +125,28 @@ def test_combobox_pressing_an_option_keeps_the_focus_in_the_query(page, nav):
     expect(page.locator('#countries-value .chip[data-value="DE"]')).to_have_count(1)
 
 
+def test_combobox_click_on_a_chip_focuses_the_query(page, nav):
+    """A click on a chip's label, in data-combobox-field, focuses the query."""
+    _goto(page, nav)
+    page.locator('#countries-value .chip[data-value="FR"] .chip-label').click()
+    expect(page.locator("input#countries-query")).to_be_focused()
+
+
+def test_combobox_click_on_a_chip_reopens_after_escape(page, nav):
+    """After Esc, a click on a chip's label opens the listbox again."""
+    _goto(page, nav)
+    query = page.locator("input#countries-query")
+    query.fill("fr")
+    listbox = page.locator("#countries-suggestions")
+    expect(listbox.locator("[role='option']").first).to_be_visible()
+    query.press("Escape")
+    expect(listbox).not_to_be_visible()
+
+    page.locator('#countries-value .chip[data-value="FR"] .chip-label').click()
+    expect(query).to_be_focused()
+    expect(listbox).to_be_visible()
+
+
 def test_combobox_backspace_removes_last_chip(page, nav):
     """Backspace in an empty query removes the last chip."""
     _goto(page, nav)

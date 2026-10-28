@@ -736,6 +736,25 @@ them, as in :ref:`combobox-render`. Custom chip widgets keep
 ``data-combobox-remove`` as long as they render the button with the
 ``remove`` field.
 
+``data-combobox-field`` is optional, and ``{{ form.countries() }}``
+works without it. When the parts are rendered one by one and the chips
+and the query input look like one field, put ``data-combobox-field`` on
+the element around them. A click in this element, except on a button,
+an input or a link, focuses the query input and opens the listbox. The
+example app sets it on the multi fields:
+
+.. code-block:: jinja
+
+    <div data-combobox>
+      {{ form.countries.label }}
+      <div data-combobox-field>
+        {{ form.countries.value() }}
+        {{ form.countries.query() }}
+        {{ form.countries.suggestions() }}
+      </div>
+      {{ form.countries.search() }}
+    </div>
+
 The script sets ``data-combobox-closed`` on the ``data-combobox``
 element after :kbd:`Esc`, or when the focus leaves the combobox.
 ``combobox.css`` hides the listbox while this attribute is set. Typing,

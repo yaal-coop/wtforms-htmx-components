@@ -144,6 +144,17 @@
     if (e.target.closest?.(OPTION)?.closest(ROOT)) e.preventDefault();
   });
 
+  // A click in [data-combobox-field], such as a chip or the space around the
+  // input, focuses the input. Buttons, inputs and links keep their own click.
+  document.addEventListener("click", function (e) {
+    const field = e.target.closest?.("[data-combobox-field]");
+    if (!field || e.target.closest("button, input, a")) return;
+    const root = field.closest(ROOT);
+    if (!root) return;
+    delete root.dataset.comboboxClosed;
+    root.querySelector('[role="combobox"]')?.focus();
+  });
+
   // Moving the focus out of the combobox closes the listbox.
   document.addEventListener("focusout", function (e) {
     const root = e.target.closest?.(ROOT);

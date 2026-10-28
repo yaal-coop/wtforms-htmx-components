@@ -52,6 +52,10 @@ element that holds them:
 </div>
 ```
 
+When the chips and the input look like one field, put
+`data-combobox-field` on the element around them. A click in it, except
+on a button, an input or a link, focuses the input.
+
 ## Links
 
 - Documentation: <https://wtforms-htmx-components.readthedocs.io/en/stable/how-to/combobox/>

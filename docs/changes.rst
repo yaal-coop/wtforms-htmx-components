@@ -12,6 +12,8 @@ Unreleased
   instead of a ``<li>``.
 - ``combobox.js`` keeps the focus in the query input while an option is
   pressed, so a click on a suggestion works in Safari.
+- ``combobox.js``: a click in an element with ``data-combobox-field``,
+  such as a chip, focuses the query input and opens the listbox.
 
 Version 0.2.0
 -------------

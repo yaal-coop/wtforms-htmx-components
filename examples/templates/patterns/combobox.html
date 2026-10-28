@@ -57,7 +57,7 @@
         <div data-combobox>
           {{ form.countries.label }}
           <div role="group" class="combobox-search">
-            <div class="combobox multi-combobox multi-combobox-inline">
+            <div class="combobox multi-combobox multi-combobox-inline" data-combobox-field>
               {{ form.countries.value() }}
               {{ form.countries.query() }}
               {{ form.countries.suggestions() }}
@@ -72,7 +72,7 @@
         <div data-combobox>
           {{ form.countries_free.label }}
           <div role="group" class="combobox-search">
-            <div class="combobox multi-combobox multi-combobox-inline">
+            <div class="combobox multi-combobox multi-combobox-inline" data-combobox-field>
               {{ form.countries_free.value() }}
               {{ form.countries_free.query() }}
               {{ form.countries_free.suggestions() }}
@@ -87,7 +87,7 @@
         <div data-combobox>
           {{ form.continents.label }}
           <div role="group" class="combobox-search">
-            <div class="combobox multi-combobox multi-combobox-inline">
+            <div class="combobox multi-combobox multi-combobox-inline" data-combobox-field>
               {{ form.continents.value() }}
               {{ form.continents.query() }}
               {{ form.continents.suggestions() }}
