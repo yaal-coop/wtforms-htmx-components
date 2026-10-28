@@ -10,6 +10,8 @@ Unreleased
   announced a button instead of an option. An override of
   ``ListboxWidget.render_option`` now returns ``button(label=...)``
   instead of a ``<li>``.
+- ``combobox.js`` keeps the focus in the query input while an option is
+  pressed, so a click on a suggestion works in Safari.
 
 Version 0.2.0
 -------------

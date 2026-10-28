@@ -110,6 +110,21 @@ def test_combobox_multi_focus_returns_to_query_after_pick(page, nav):
     expect(page.locator("input#countries-query")).to_be_focused()
 
 
+def test_combobox_pressing_an_option_keeps_the_focus_in_the_query(page, nav):
+    """The query keeps the focus while an option is pressed, so the click lands."""
+    _goto(page, nav)
+    query = page.locator("input#countries-query")
+    query.fill("ger")
+    option = page.locator("#countries-suggestions [role='option']", has_text="Germany")
+    expect(option).to_be_visible()
+
+    option.hover()
+    page.mouse.down()
+    expect(query).to_be_focused()
+    page.mouse.up()
+    expect(page.locator('#countries-value .chip[data-value="DE"]')).to_have_count(1)
+
+
 def test_combobox_backspace_removes_last_chip(page, nav):
     """Backspace in an empty query removes the last chip."""
     _goto(page, nav)

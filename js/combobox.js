@@ -137,6 +137,13 @@
     clearClosedState(e);
   });
 
+  // Keep the focus in the input when the user presses an option. Safari does
+  // not focus a clicked button: without this, the input would lose the focus
+  // to nothing, the listbox would close, and the click would miss the option.
+  document.addEventListener("mousedown", function (e) {
+    if (e.target.closest?.(OPTION)?.closest(ROOT)) e.preventDefault();
+  });
+
   // Moving the focus out of the combobox closes the listbox.
   document.addEventListener("focusout", function (e) {
     const root = e.target.closest?.(ROOT);
