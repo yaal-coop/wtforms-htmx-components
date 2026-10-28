@@ -1,8 +1,10 @@
 Changes
 =======
 
-Unreleased
-----------
+Version 0.3.0
+-------------
+
+Released 2026-10-28
 
 - The listbox is a ``<div role="listbox">``, and each suggestion is the
   submit button itself, with ``role="option"`` and ``data-value``.
