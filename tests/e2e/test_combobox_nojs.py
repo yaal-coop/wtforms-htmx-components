@@ -111,7 +111,7 @@ def test_enter_in_a_query_searches_without_javascript(browser, live_server):
 def test_min_query_length_zero_search_lists_every_option_nojs(page_nojs, nav_nojs):
     """Search with an empty query lists every continent."""
     _goto(page_nojs, nav_nojs)
-    options = page_nojs.locator("#continents-suggestions li[role='option']")
+    options = page_nojs.locator("#continents-suggestions [role='option']")
     expect(options).to_have_count(0)
 
     _submit(page_nojs, "button[name='continents-search']")

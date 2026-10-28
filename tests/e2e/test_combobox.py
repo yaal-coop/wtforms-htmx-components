@@ -32,11 +32,9 @@ def test_combobox_single_keystroke_swaps_only_listbox(page, nav):
     _clear_country_chip(page)
     search = page.locator("input#country-query")
     search.fill("ger")
-    listbox = page.locator("ul#country-suggestions")
-    expect(listbox.locator("li[role='option']").first).to_be_visible()
-    expect(
-        listbox.locator("li[role='option'] button", has_text="Germany")
-    ).not_to_have_count(0)
+    listbox = page.locator("#country-suggestions")
+    expect(listbox.locator("[role='option']").first).to_be_visible()
+    expect(listbox.locator("[role='option']", has_text="Germany")).not_to_have_count(0)
 
 
 def test_combobox_single_click_renders_chip(page, nav):
@@ -44,10 +42,8 @@ def test_combobox_single_click_renders_chip(page, nav):
     _goto(page, nav)
     _clear_country_chip(page)
     page.locator("input#country-query").fill("ger")
-    expect(
-        page.locator("ul#country-suggestions li[role='option']").first
-    ).to_be_visible()
-    page.locator("ul#country-suggestions button", has_text="Germany").click()
+    expect(page.locator("#country-suggestions [role='option']").first).to_be_visible()
+    page.locator("#country-suggestions button", has_text="Germany").click()
     chip = page.locator('#country-value .chip[data-value="DE"]')
     expect(chip).to_have_count(1)
 
@@ -67,10 +63,8 @@ def test_combobox_multi_add_chip(page, nav):
     """Clicking a multi-suggestion adds a chip for that country."""
     _goto(page, nav)
     page.locator("input#countries-query").fill("ger")
-    expect(
-        page.locator("ul#countries-suggestions li[role='option']").first
-    ).to_be_visible()
-    page.locator("ul#countries-suggestions button", has_text="Germany").click()
+    expect(page.locator("#countries-suggestions [role='option']").first).to_be_visible()
+    page.locator("#countries-suggestions button", has_text="Germany").click()
     chip = page.locator("#countries-value .chip", has_text="Germany")
     expect(chip).to_have_count(1)
 
@@ -79,23 +73,17 @@ def test_combobox_multi_listbox_reopens_after_pick(page, nav):
     """Typing again after a pick must re-populate the listbox."""
     _goto(page, nav)
     page.locator("input#countries-query").fill("ger")
-    expect(
-        page.locator("ul#countries-suggestions li[role='option']").first
-    ).to_be_visible()
-    page.locator("ul#countries-suggestions button", has_text="Germany").click()
+    expect(page.locator("#countries-suggestions [role='option']").first).to_be_visible()
+    page.locator("#countries-suggestions button", has_text="Germany").click()
     expect(page.locator("#countries-value .chip", has_text="Germany")).to_be_visible()
     expect(page.locator("input#countries-query")).to_have_value("")
     _wait_for_settle(page)
 
     # Refill with a query whose match isn't already picked.
     page.locator("input#countries-query").fill("spa")
+    expect(page.locator("#countries-suggestions [role='option']").first).to_be_visible()
     expect(
-        page.locator("ul#countries-suggestions li[role='option']").first
-    ).to_be_visible()
-    expect(
-        page.locator(
-            "ul#countries-suggestions li[role='option'] button", has_text="Spain"
-        )
+        page.locator("#countries-suggestions [role='option']", has_text="Spain")
     ).not_to_have_count(0)
 
 
@@ -103,10 +91,8 @@ def test_combobox_multi_remove_chip(page, nav):
     """Clicking the chip's ``×`` removes it from the list."""
     _goto(page, nav)
     page.locator("input#countries-query").fill("ger")
-    expect(
-        page.locator("ul#countries-suggestions li[role='option']").first
-    ).to_be_visible()
-    page.locator("ul#countries-suggestions button", has_text="Germany").click()
+    expect(page.locator("#countries-suggestions [role='option']").first).to_be_visible()
+    page.locator("#countries-suggestions button", has_text="Germany").click()
     chip = page.locator("#countries-value .chip", has_text="Germany")
     expect(chip).to_be_visible()
 
@@ -119,10 +105,8 @@ def test_combobox_multi_focus_returns_to_query_after_pick(page, nav):
     """Picking a multi suggestion returns focus to the query input."""
     _goto(page, nav)
     page.locator("input#countries-query").fill("ger")
-    expect(
-        page.locator("ul#countries-suggestions li[role='option']").first
-    ).to_be_visible()
-    page.locator("ul#countries-suggestions button", has_text="Germany").click()
+    expect(page.locator("#countries-suggestions [role='option']").first).to_be_visible()
+    page.locator("#countries-suggestions button", has_text="Germany").click()
     expect(page.locator("input#countries-query")).to_be_focused()
 
 
@@ -131,10 +115,8 @@ def test_combobox_backspace_removes_last_chip(page, nav):
     _goto(page, nav)
     query = page.locator("input#countries-query")
     query.fill("ger")
-    expect(
-        page.locator("ul#countries-suggestions li[role='option']").first
-    ).to_be_visible()
-    page.locator("ul#countries-suggestions button", has_text="Germany").click()
+    expect(page.locator("#countries-suggestions [role='option']").first).to_be_visible()
+    page.locator("#countries-suggestions button", has_text="Germany").click()
     expect(page.locator("#countries-value .chip", has_text="Germany")).to_be_visible()
     query.press("Backspace")
     expect(page.locator('#countries-value .chip[data-value="DE"]')).to_have_count(0)
@@ -145,8 +127,8 @@ def test_combobox_single_free_synthetic_option_appears(page, nav):
     """Typing an off-catalog query surfaces an "Add" option in the listbox."""
     _goto(page, nav)
     page.locator("input#country_free-query").fill("Atlantis")
-    listbox = page.locator("ul#country_free-suggestions")
-    expect(listbox.locator("li[role='option']").first).to_be_visible()
+    listbox = page.locator("#country_free-suggestions")
+    expect(listbox.locator("[role='option']").first).to_be_visible()
     expect(listbox.locator("button", has_text='Add "Atlantis"')).to_have_count(1)
 
 
@@ -155,9 +137,9 @@ def test_combobox_single_free_pick_synthetic_renders_chip(page, nav):
     _goto(page, nav)
     page.locator("input#country_free-query").fill("Atlantis")
     expect(
-        page.locator("ul#country_free-suggestions li[role='option']").first
+        page.locator("#country_free-suggestions [role='option']").first
     ).to_be_visible()
-    page.locator("ul#country_free-suggestions button", has_text="Atlantis").click()
+    page.locator("#country_free-suggestions button", has_text="Atlantis").click()
     chip = page.locator('#country_free-value .chip[data-value="Atlantis"]')
     expect(chip).to_have_count(1)
 
@@ -166,8 +148,8 @@ def test_combobox_single_free_synthetic_suppressed_when_catalog_match(page, nav)
     """An exact catalog label doesn't double up with a synthetic option."""
     _goto(page, nav)
     page.locator("input#country_free-query").fill("France")
-    listbox = page.locator("ul#country_free-suggestions")
-    expect(listbox.locator("li[role='option']").first).to_be_visible()
+    listbox = page.locator("#country_free-suggestions")
+    expect(listbox.locator("[role='option']").first).to_be_visible()
     expect(listbox.locator("button", has_text='Add "France"')).to_have_count(0)
 
 
@@ -176,9 +158,9 @@ def test_combobox_multi_free_synthetic_pick_adds_chip(page, nav):
     _goto(page, nav)
     page.locator("input#countries_free-query").fill("Atlantis")
     expect(
-        page.locator("ul#countries_free-suggestions li[role='option']").first
+        page.locator("#countries_free-suggestions [role='option']").first
     ).to_be_visible()
-    page.locator("ul#countries_free-suggestions button", has_text="Atlantis").click()
+    page.locator("#countries_free-suggestions button", has_text="Atlantis").click()
     chip = page.locator('#countries_free-value .chip[data-value="Atlantis"]')
     expect(chip).to_have_count(1)
 
@@ -188,9 +170,7 @@ def test_combobox_arrow_down_from_input_focuses_first_option(page, nav):
     _goto(page, nav)
     query = page.locator("input#countries-query")
     query.fill("fr")
-    first_option = page.locator(
-        "ul#countries-suggestions li[role='option'] button"
-    ).first
+    first_option = page.locator("#countries-suggestions [role='option']").first
     expect(first_option).to_be_visible()
     query.press("ArrowDown")
     expect(first_option).to_be_focused()
@@ -201,7 +181,7 @@ def test_combobox_arrow_navigation_between_options(page, nav):
     _goto(page, nav)
     query = page.locator("input#countries-query")
     query.fill("a")
-    options = page.locator("ul#countries-suggestions li[role='option'] button")
+    options = page.locator("#countries-suggestions [role='option']")
     expect(options.first).to_be_visible()
 
     query.press("ArrowDown")
@@ -222,7 +202,7 @@ def test_combobox_home_end_jump_to_extremes(page, nav):
     _goto(page, nav)
     query = page.locator("input#countries-query")
     query.fill("a")
-    options = page.locator("ul#countries-suggestions li[role='option'] button")
+    options = page.locator("#countries-suggestions [role='option']")
     expect(options.first).to_be_visible()
 
     query.press("ArrowDown")
@@ -238,8 +218,8 @@ def test_combobox_escape_closes_listbox(page, nav):
     _goto(page, nav)
     query = page.locator("input#countries-query")
     query.fill("fr")
-    listbox = page.locator("ul#countries-suggestions")
-    expect(listbox.locator("li[role='option']").first).to_be_visible()
+    listbox = page.locator("#countries-suggestions")
+    expect(listbox.locator("[role='option']").first).to_be_visible()
 
     query.press("Escape")
     expect(query).to_be_focused()
@@ -251,11 +231,11 @@ def test_combobox_escape_from_option_closes_listbox(page, nav):
     _goto(page, nav)
     query = page.locator("input#countries-query")
     query.fill("fr")
-    listbox = page.locator("ul#countries-suggestions")
-    expect(listbox.locator("li[role='option']").first).to_be_visible()
+    listbox = page.locator("#countries-suggestions")
+    expect(listbox.locator("[role='option']").first).to_be_visible()
 
     query.press("ArrowDown")
-    options = page.locator("ul#countries-suggestions li[role='option'] button")
+    options = page.locator("#countries-suggestions [role='option']")
     expect(options.first).to_be_focused()
 
     options.first.press("Escape")
@@ -268,7 +248,7 @@ def test_combobox_arrow_up_from_input_focuses_last_option(page, nav):
     _goto(page, nav)
     query = page.locator("input#countries-query")
     query.fill("fr")
-    options = page.locator("ul#countries-suggestions li[role='option'] button")
+    options = page.locator("#countries-suggestions [role='option']")
     expect(options.first).to_be_visible()
 
     query.press("ArrowUp")
@@ -280,7 +260,7 @@ def test_combobox_arrow_down_after_hover_advances_from_hovered(page, nav):
     _goto(page, nav)
     query = page.locator("input#countries-query")
     query.fill("fr")
-    options = page.locator("ul#countries-suggestions li[role='option'] button")
+    options = page.locator("#countries-suggestions [role='option']")
     expect(options.first).to_be_visible()
 
     options.nth(3).hover()
@@ -293,7 +273,7 @@ def test_combobox_arrow_up_after_hover_steps_back_from_hovered(page, nav):
     _goto(page, nav)
     query = page.locator("input#countries-query")
     query.fill("fr")
-    options = page.locator("ul#countries-suggestions li[role='option'] button")
+    options = page.locator("#countries-suggestions [role='option']")
     expect(options.first).to_be_visible()
 
     options.nth(3).hover()
@@ -306,7 +286,7 @@ def test_combobox_mouseover_follows_keyboard_focus(page, nav):
     _goto(page, nav)
     query = page.locator("input#countries-query")
     query.fill("fr")
-    options = page.locator("ul#countries-suggestions li[role='option'] button")
+    options = page.locator("#countries-suggestions [role='option']")
     expect(options.first).to_be_visible()
 
     query.press("ArrowDown")
@@ -321,7 +301,7 @@ def test_combobox_mouseover_does_not_steal_focus_from_input(page, nav):
     _goto(page, nav)
     query = page.locator("input#countries-query")
     query.fill("fr")
-    options = page.locator("ul#countries-suggestions li[role='option'] button")
+    options = page.locator("#countries-suggestions [role='option']")
     expect(options.first).to_be_visible()
 
     options.nth(2).hover()
@@ -333,8 +313,8 @@ def test_combobox_click_back_into_input_after_escape_reopens_listbox(page, nav):
     _goto(page, nav)
     query = page.locator("input#countries-query")
     query.fill("fr")
-    listbox = page.locator("ul#countries-suggestions")
-    expect(listbox.locator("li[role='option']").first).to_be_visible()
+    listbox = page.locator("#countries-suggestions")
+    expect(listbox.locator("[role='option']").first).to_be_visible()
 
     query.press("Escape")
     expect(listbox).not_to_be_visible()
@@ -350,8 +330,8 @@ def test_combobox_click_on_focused_input_after_escape_reopens_listbox(page, nav)
     _goto(page, nav)
     query = page.locator("input#countries-query")
     query.fill("fr")
-    listbox = page.locator("ul#countries-suggestions")
-    expect(listbox.locator("li[role='option']").first).to_be_visible()
+    listbox = page.locator("#countries-suggestions")
+    expect(listbox.locator("[role='option']").first).to_be_visible()
 
     query.press("Escape")
     expect(listbox).not_to_be_visible()
@@ -364,30 +344,30 @@ def test_combobox_suggest_on_focus_reopens_on_click_after_focusout(page, nav):
     """With suggestions on focus, clicking back into the input shows them again."""
     _goto(page, nav)
     query = page.locator("input#continents-query")
-    listbox = page.locator("ul#continents-suggestions")
+    listbox = page.locator("#continents-suggestions")
     query.click()
-    expect(listbox.locator("li[role='option']").first).to_be_visible()
+    expect(listbox.locator("[role='option']").first).to_be_visible()
 
     page.locator("h1").click()
     expect(listbox).not_to_be_visible()
 
     query.click()
-    expect(listbox.locator("li[role='option']").first).to_be_visible()
+    expect(listbox.locator("[role='option']").first).to_be_visible()
 
 
 def test_combobox_suggest_on_focus_reopens_on_keyboard_focus(page, nav):
     """With suggestions on focus, focus coming back without a click shows them again."""
     _goto(page, nav)
     query = page.locator("input#continents-query")
-    listbox = page.locator("ul#continents-suggestions")
+    listbox = page.locator("#continents-suggestions")
     query.click()
-    expect(listbox.locator("li[role='option']").first).to_be_visible()
+    expect(listbox.locator("[role='option']").first).to_be_visible()
 
     page.locator("h1").click()
     expect(listbox).not_to_be_visible()
 
     query.focus()
-    expect(listbox.locator("li[role='option']").first).to_be_visible()
+    expect(listbox.locator("[role='option']").first).to_be_visible()
 
 
 def test_combobox_click_outside_closes_listbox(page, nav):
@@ -395,8 +375,8 @@ def test_combobox_click_outside_closes_listbox(page, nav):
     _goto(page, nav)
     query = page.locator("input#countries-query")
     query.fill("fr")
-    listbox = page.locator("ul#countries-suggestions")
-    expect(listbox.locator("li[role='option']").first).to_be_visible()
+    listbox = page.locator("#countries-suggestions")
+    expect(listbox.locator("[role='option']").first).to_be_visible()
 
     page.locator("h1").click()
     expect(listbox).not_to_be_visible()
@@ -407,17 +387,15 @@ def test_combobox_arrow_down_reopens_after_escape(page, nav):
     _goto(page, nav)
     query = page.locator("input#countries-query")
     query.fill("fr")
-    listbox = page.locator("ul#countries-suggestions")
-    expect(listbox.locator("li[role='option']").first).to_be_visible()
+    listbox = page.locator("#countries-suggestions")
+    expect(listbox.locator("[role='option']").first).to_be_visible()
 
     query.press("Escape")
     expect(listbox).not_to_be_visible()
 
     query.press("ArrowDown")
     expect(listbox).to_be_visible()
-    expect(
-        page.locator("ul#countries-suggestions li[role='option'] button").first
-    ).to_be_focused()
+    expect(page.locator("#countries-suggestions [role='option']").first).to_be_focused()
 
 
 def test_combobox_resume_typing_reopens_after_escape(page, nav):
@@ -425,21 +403,21 @@ def test_combobox_resume_typing_reopens_after_escape(page, nav):
     _goto(page, nav)
     query = page.locator("input#countries-query")
     query.fill("fr")
-    listbox = page.locator("ul#countries-suggestions")
-    expect(listbox.locator("li[role='option']").first).to_be_visible()
+    listbox = page.locator("#countries-suggestions")
+    expect(listbox.locator("[role='option']").first).to_be_visible()
 
     query.press("Escape")
     expect(listbox).not_to_be_visible()
 
     query.press("a")
-    expect(listbox.locator("li[role='option']").first).to_be_visible()
+    expect(listbox.locator("[role='option']").first).to_be_visible()
     expect(listbox).to_be_visible()
 
 
 def test_combobox_min_query_length_zero_suggests_on_focus(page, nav):
     """The continents listbox is empty on load and lists every continent on focus."""
     _goto(page, nav)
-    options = page.locator("#continents-suggestions li[role='option']")
+    options = page.locator("#continents-suggestions [role='option']")
     expect(options).to_have_count(0)
 
     page.locator("input#continents-query").focus()
@@ -457,4 +435,4 @@ def test_combobox_min_query_length_zero_suggests_the_rest_after_a_pick(page, nav
     page.locator('#continents-suggestions button[value="Asia"]').click()
 
     expect(page.locator('#continents-value .chip[data-value="Asia"]')).to_have_count(1)
-    expect(page.locator("#continents-suggestions li[role='option']")).to_have_count(6)
+    expect(page.locator("#continents-suggestions [role='option']")).to_have_count(6)

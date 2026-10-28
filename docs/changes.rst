@@ -1,6 +1,16 @@
 Changes
 =======
 
+Unreleased
+----------
+
+- The listbox is a ``<div role="listbox">``, and each suggestion is the
+  submit button itself, with ``role="option"`` and ``data-value``.
+  Before, a ``<li role="option">`` held the button, and screen readers
+  announced a button instead of an option. An override of
+  ``ListboxWidget.render_option`` now returns ``button(label=...)``
+  instead of a ``<li>``.
+
 Version 0.2.0
 -------------
 

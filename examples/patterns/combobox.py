@@ -87,8 +87,7 @@ class FlaggedListboxWidget(ListboxWidget):
         if opt.choice.value in NAME_BY_CODE:
             label = _flag_img(opt.choice.value) + label
 
-        li_attrs = html_params(role="option", data_value=opt.choice.value)
-        return f"<li {li_attrs}>{button(label=label)}</li>"
+        return button(label=label)
 
 
 class StyledChipMixin:

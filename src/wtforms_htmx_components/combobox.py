@@ -75,12 +75,12 @@ class QueryInputWidget:
 
 
 class ListboxWidget:
-    """Render the suggestions as a ``<ul role="listbox">``.
+    """Render the suggestions as a ``<div role="listbox">``.
 
-    Each suggestion is a ``<li role="option">`` holding a submit button
-    rendered by the field's ``option_widget``. ``multi=True`` sets
+    Each suggestion is a submit button with ``role="option"``, rendered by
+    the field's ``option_widget``. ``multi=True`` sets
     ``aria-multiselectable="true"``. Override :meth:`render_option` to
-    change the markup of a suggestion.
+    change the label of a suggestion.
     """
 
     def __init__(self, *, multi: bool = False) -> None:
@@ -94,19 +94,24 @@ class ListboxWidget:
         attrs.update(kwargs)
         items: list[str] = []
         for opt in field:
-            button = functools.partial(opt, **opt._form.htmx_submit_attrs(opt))
+            button = functools.partial(
+                opt,
+                role="option",
+                data_value=opt.choice.value,
+                **opt._form.htmx_submit_attrs(opt),
+            )
             items.append(self.render_option(opt, button))
 
-        return Markup(f"<ul {html_params(**attrs)}>{''.join(items)}</ul>")
+        return Markup(f"<div {html_params(**attrs)}>{''.join(items)}</div>")
 
     def render_option(self, opt: Any, button: Callable[..., Markup]) -> str:
         """Render one suggestion.
 
-        ``button`` renders the submit button that picks the suggestion.
-        It takes the button's ``label`` and HTML attributes.
+        ``button`` renders the submit button that picks the suggestion,
+        with ``role="option"``. It takes the button's ``label`` and extra
+        HTML attributes.
         """
-        li_attrs = html_params(role="option", data_value=opt.choice.value)
-        return f"<li {li_attrs}>{button(label=opt.choice.label)}</li>"
+        return button(label=opt.choice.label)
 
 
 def _locked(field: Any) -> bool:

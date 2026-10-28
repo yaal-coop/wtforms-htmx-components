@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import re
 from dataclasses import dataclass
 from dataclasses import field as dc_field
 from types import SimpleNamespace
@@ -602,14 +603,19 @@ def test_widget_aria_expanded_reflects_choices():
     assert 'aria-expanded="true"' in str(populated.country())
 
 
-def test_widget_listbox_emits_role_option_with_data_value():
-    """Each suggestion is a role=option with its value."""
+def test_widget_listbox_options_are_buttons_with_role_option():
+    """The listbox is a div, and each suggestion is a button with role=option."""
     form = _SingleForm(
         _formdata({"country-query": "ger", "country-value": ""}),
     )
     html = str(form.country.suggestions())
-    assert 'role="option"' in html
-    assert 'data-value="DE"' in html
+    assert html.startswith("<div ")
+    assert 'role="listbox"' in html
+    assert "<li" not in html
+    option = re.search(r'<button [^>]*data-value="DE"[^>]*>', html).group(0)
+    assert 'role="option"' in option
+    assert 'name="country-suggestions"' in option
+    assert 'value="DE"' in option
 
 
 def test_single_allow_custom_value_skips_synthetic_when_value_matches():
@@ -901,7 +907,7 @@ def test_multi_part_render_kw_survives_a_rerender():
 
     form = form_class(
         _formdata({"countries-query": "fra", "countries-value": []}),
-        headers={"HX-Request": "true", "HX-Source": "ul#countries-suggestions"},
+        headers={"HX-Request": "true", "HX-Source": "div#countries-suggestions"},
     )
     assert 'class="menu"' in form.partial().body
 

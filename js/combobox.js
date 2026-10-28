@@ -1,11 +1,13 @@
 /* Keyboard navigation for the combobox, per the ARIA 1.2 combobox pattern.
  * Handlers sit on the document, so they keep working after htmx swaps.
- * [data-combobox] marks the element that holds the parts of a combobox. */
+ * [data-combobox] marks the element that holds the parts of a combobox.
+ * Each option is a submit button with role="option". */
 (function () {
   const ROOT = "[data-combobox]";
+  const OPTION = '[role="option"]';
 
   function optionButtons(root) {
-    return Array.from(root.querySelectorAll('[role="option"] > button'));
+    return Array.from(root.querySelectorAll(OPTION));
   }
 
   document.addEventListener("keydown", function (e) {
@@ -23,7 +25,7 @@
       const buttons = optionButtons(root);
       if (!buttons.length) return;
       e.preventDefault();
-      const hovered = root.querySelector('[role="option"] > button:hover');
+      const hovered = root.querySelector(`${OPTION}:hover`);
       const len = buttons.length;
       let nextIdx;
       if (e.key === "ArrowDown") {
@@ -38,7 +40,7 @@
     }
 
     // Arrow keys / Home / End on an option button
-    if (target.matches?.('[role="option"] > button')) {
+    if (target.matches?.(OPTION)) {
       const root = target.closest(ROOT);
       if (!root) return;
       const buttons = optionButtons(root);
@@ -146,11 +148,11 @@
   // When an option has the focus, hovering another option moves the focus
   // to it. Hovering never takes the focus from the input.
   document.addEventListener("mouseover", function (e) {
-    const btn = e.target.closest?.('[role="option"] > button');
+    const btn = e.target.closest?.(OPTION);
     if (!btn) return;
     if (!btn.closest(ROOT)) return;
     const active = document.activeElement;
-    if (!active?.matches?.('[role="option"] > button')) return;
+    if (!active?.matches?.(OPTION)) return;
     if (active === btn) return;
     btn.focus({ preventScroll: true });
   });

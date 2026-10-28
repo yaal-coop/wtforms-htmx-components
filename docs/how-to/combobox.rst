@@ -521,7 +521,7 @@ text, like a click on any suggestion:
 Customize the rendering
 -----------------------
 
-Each widget can be replaced on its own. To change the markup of one
+Each widget can be replaced on its own. To change the label of one
 suggestion, subclass :class:`~wtforms_htmx_components.ListboxWidget` and
 override :meth:`~wtforms_htmx_components.ListboxWidget.render_option`.
 The example app's ``FlaggedListboxWidget`` adds a flag to each option:
@@ -529,17 +529,17 @@ The example app's ``FlaggedListboxWidget`` adds a flag to each option:
 .. code-block:: python
 
     from markupsafe import Markup
-    from wtforms.widgets import html_params
     from wtforms_htmx_components import ListboxWidget
 
     class FlaggedListboxWidget(ListboxWidget):
         def render_option(self, opt, button):
             label = Markup(flag_img(opt.choice.value)) + opt.choice.label
-            li_attrs = html_params(role="option", data_value=opt.choice.value)
-            return f"<li {li_attrs}>{button(label=label)}</li>"
+            return button(label=label)
 
-``button`` renders the submit button that picks the suggestion, with the
-htmx attributes already set. To change the markup of a chip, override
+``button`` renders the submit button that picks the suggestion. The
+button is the option itself: ``role="option"``, ``data-value`` and the
+htmx attributes are already set. It takes the label and extra HTML
+attributes. To change the markup of a chip, override
 :meth:`~wtforms_htmx_components.ChipsWidget.render_chip` in the same way.
 Its ``remove`` argument is the button field that removes the value, or
 ``None`` when the field is read-only or disabled.
@@ -627,11 +627,11 @@ The query input follows the ARIA 1.2 combobox pattern:
 - ``aria-autocomplete="list"`` and ``aria-haspopup="listbox"``;
 - ``aria-expanded`` set to ``true`` when the listbox has options.
 
-The listbox has ``role="listbox"`` and its children have
-``role="option"``. Each option holds a submit button, so a click and the
-keyboard both submit it. :kbd:`Tab` moves the focus through the
-suggestions, and :kbd:`Enter` activates the focused button. Arrow keys
-need JavaScript: see :ref:`pattern-combobox-keyboard`.
+The listbox is a ``<div role="listbox">``. Each option is a submit
+button with ``role="option"``, so a click and the keyboard both submit
+it, and the focused element is the option itself. :kbd:`Tab` moves the
+focus through the suggestions, and :kbd:`Enter` activates the focused
+option. Arrow keys need JavaScript: see :ref:`pattern-combobox-keyboard`.
 
 Close the listbox on blur
 -------------------------
@@ -727,7 +727,7 @@ library renders:
 
 - ``data-combobox`` on the element that holds the parts of the field;
 - ``role="combobox"`` on the query input;
-- ``role="option"`` around each suggestion button;
+- ``role="option"`` on each suggestion button;
 - ``data-combobox-remove`` on each chip's ``×``.
 
 ``{{ form.country() }}`` renders all of them. When the parts are
