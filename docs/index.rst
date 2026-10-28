@@ -49,25 +49,15 @@ Each field packages a recipe of several triggers (typing, suggestions,
 pick, store, chip) into a single ``FormField`` declaration. It needs no
 custom widget and no JavaScript.
 
-Start here
-----------
-
-- :doc:`how-to/combobox`: single and multi value combobox, with
-  optional free-form input.
-- :doc:`api`: reference for the fields, widgets and validators.
-- :doc:`combobox-js`: source of the optional combobox script and CSS.
-
 .. toctree::
     :caption: How-to guides
     :maxdepth: 1
-    :hidden:
 
     how-to/combobox
 
 .. toctree::
     :caption: Reference
     :maxdepth: 1
-    :hidden:
 
     api
     combobox-js
@@ -75,6 +65,5 @@ Start here
 .. toctree::
     :caption: Changelog
     :maxdepth: 1
-    :hidden:
 
     changes
