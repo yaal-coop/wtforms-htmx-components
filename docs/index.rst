@@ -10,12 +10,12 @@ built on :external+wtforms-htmx:doc:`wtforms-htmx <index>`.
 
 .. screencast:: |examples|/patterns/combobox
    :locator: .demo-area .combobox-search
-   :locator-padding: 5 10 60 10
+   :locator-padding: 5 10 330 10
    :viewport-height: 1200
    :autoplay:
    :muted:
    :loop:
-   :trim-start:
+   :trim-start: 0.2
    :poster:
    :alias: combobox
    :interactions:
@@ -23,24 +23,28 @@ built on :external+wtforms-htmx:doc:`wtforms-htmx <index>`.
      const press = (key) => document.activeElement.dispatchEvent(
        new KeyboardEvent('keydown', {key, bubbles: true}));
      const query = document.querySelector('#countries-query');
-     // Hide the other comboboxes that show under the listbox.
+     // Hide the other comboboxes that show under the listbox. The frames
+     // taken before, during the first 200 ms, are cut by :trim-start:.
+     await wait(400);
      for (const cell of document.querySelectorAll('.combobox-cell:not(.demo-area)')) {
        cell.style.visibility = 'hidden';
      }
      await wait(800);
      query.focus();
+     // Linger on the long list that "u" matches, then narrow it down.
      for (const c of 'ukr') {
        query.value += c;
        query.dispatchEvent(new Event('input', {bubbles: true}));
-       await wait(250);
+       await wait(c === 'u' ? 1300 : 250);
      }
      await wait(900);
      press('ArrowDown');
      await wait(800);
      document.activeElement.click();
      await wait(1200);
+     // Remove the country just picked, so the video ends as it started.
      document.querySelector(
-       '#countries-value .chip[data-value="CU"] .chip-remove').click();
+       '#countries-value .chip[data-value="UA"] .chip-remove').click();
      await wait(1500);
      document.activeElement.blur();
      await wait(500);
