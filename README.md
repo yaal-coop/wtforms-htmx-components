@@ -8,7 +8,7 @@
 # wtforms-htmx-components
 
 Ready-made interactive [WTForms](https://wtforms.readthedocs.io/) fields
-built on [wtforms-htmx](https://github.com/yaal-coop/wtforms-htmx).
+built on [wtforms-htmx](https://wtforms-htmx.readthedocs.io/).
 
 <p align="center">
   <picture>
